@@ -7,11 +7,9 @@ tb?=$(top)_tb.v
 MACROS_SIM=-DINIT=(2**24-10) -DBENCH -DSIM -DPASSTHROUGH_PLL -DBOARD_FREQ=27 -DCPU_FREQ=27
 MACROS_RTL=
 MACROS_SYN=
-TB_V = SOC_tb.v
 # DESIGN=top.v
 DESIGN+= SOC.v
 DESIGN+= cores/cpu/femtorv32_quark.v
-DESIGN+= address_decoder.v
 DESIGN+= chip_select.v
 DESIGN+= cores/memory/Memory.v
 DESIGN+= cores/uart/perip_uart.v
@@ -23,7 +21,8 @@ DESIGN+= cores/dpRAM/perip_dpram.v
 DESIGN+= cores/hc_sr04/hc_sr04.v
 DESIGN+= cores/hc_sr04/perip_hc_sr04.v
 DIR_BUILD=build
-PORT=/dev/ttyUSB1
+PORT=/dev/ttyUSB0
+DEVSERIAL=/dev/ttyACM0
 BAUD=57600
 # Z: Nombre para empaquetar proyecto
 Z=femtoriscv
@@ -57,12 +56,12 @@ MACRO_SYN?=
 MACROS_SYN := $(foreach macro,$(MACROS_SYN),"$(macro)")
 
 help-syn:
-	@echo "\n## SINTESIS Y CONFIGURACIÓN ##"
-	@echo "\tmake syn\t-> Sintetizar diseño"
-	@echo "\tmake config\t-> Configurar fpga"
-	@echo "\tmake log-syn\t\t-> Ver el log de la síntesis con Yosys. Comandos: /palabra -> buscar, n -> próxima palabra, q -> salir, h -> salir"
-	@echo "\tmake log-pnr\t\t-> Ver el log del place&route con nextpnr. Comandos: /palabra -> buscar, n -> próxima palabra, q -> salir, h -> salir"
-	@echo "\tmake clean\t-> Limipiar síntesis si ha modificado el diseño"
+	@printf "\n## SINTESIS Y CONFIGURACIÓN ##\n"
+	@printf "\tmake syn\t-> Sintetizar diseño\n"
+	@printf "\tmake config\t-> Configurar fpga\n"
+	@printf "\tmake log-syn\t\t-> Ver el log de la síntesis con Yosys. Comandos: /palabra -> buscar, n -> próxima palabra, q -> salir, h -> salir\n"
+	@printf "\tmake log-pnr\t\t-> Ver el log del place&route con nextpnr. Comandos: /palabra -> buscar, n -> próxima palabra, q -> salir, h -> salir\n"
+	@printf "\tmake clean\t-> Limipiar síntesis si ha modificado el diseño\n"
 
 syn: json asc bitstream
 
@@ -87,6 +86,8 @@ $(BISTREAM): $(ASC)
 config:
 	stty -F $(DEVSERIAL) raw
 	cat $(BISTREAM) > $(DEVSERIAL)
+
+config-sram: config
 
 json:$(JSON)
 asc:$(ASC)
@@ -143,20 +144,28 @@ TBN=$(basename $(notdir $(tb)))
 S=sim
 LOG_YOSYS_RTL?=$(S)/yosys-$(top).log
 
+.ONESHELL:
+SHELL=/bin/bash
+# Enviroment conda to activate
+ENV=digital
+CONDA_ACTIVATE = source $$($$CONDA_EXE info --base)/etc/profile.d/conda.sh ; conda activate; conda activate $(ENV)
+RUN = $(CONDA_ACTIVATE) &&
+RUN =# Activate if don't use CONDA
+
 help-sim:
-	@echo "\n## SIMULACIÓN Y RTL##"
-	@echo "\tmake rtl \t-> Crear el RTL desde el TOP"
-	@echo "\tmake sim \t-> Simular diseño"
-	@echo "\tmake wave \t-> Ver simulación en gtkwave"
-	@echo "\tmake log-rtl \t-> Ver el log del RTL. Comandos: /palabra -> buscar, n -> próxima palabra, q -> salir, h -> salir"
-	@echo "\nEjemplos de simulaciones con más argumentos:"
-	@echo "\tmake sim VVP_ARG=+inputs=5\t\t:Agregar un argumento a la simulación"
-	@echo "\tmake sim VVP_ARG=+a=5\ +b=6\t\t:Agregar varios argumentos a la simulación"
-	@echo "\tmake sim VVP_ARG+=+a=5 VVP_ARG+=+b=6\t:Agregar varios argumentos a la simulación"
-	@echo "\tmake rtl top=modulo1\t\t\t:Obtiene el RTL de otros modulos (submodulos)"
-	@echo "\tmake rtl rtl2png\t\t\t:Convertir el RTL del TOP desde formato svg a png"
-	@echo "\tmake rtl rtl2png top=modulo1\t\t:Además de convertir, obtiene el RTL de otros modulos (submodulos)"
-	@echo "\tmake ConvertOneVerilogFile\t\t:Crear un único verilog del diseño"
+	@printf "\n## SIMULACIÓN Y RTL##"
+	@printf "\tmake rtl \t-> Crear el RTL desde el TOP\n"
+	@printf "\tmake sim \t-> Simular diseño\n"
+	@printf "\tmake wave \t-> Ver simulación en gtkwave\n"
+	@printf "\tmake log-rtl \t-> Ver el log del RTL. Comandos: /palabra -> buscar, n -> próxima palabra, q -> salir, h -> salir\n"
+	@printf "\nEjemplos de simulaciones con más argumentos:\n"
+	@printf "\tmake sim VVP_ARG=+inputs=5\t\t:Agregar un argumento a la simulación\n"
+	@printf "\tmake sim VVP_ARG=+a=5\ +b=6\t\t:Agregar varios argumentos a la simulación\n"
+	@printf "\tmake sim VVP_ARG+=+a=5 VVP_ARG+=+b=6\t:Agregar varios argumentos a la simulación\n"
+	@printf "\tmake rtl top=modulo1\t\t\t:Obtiene el RTL de otros modulos (submodulos)\n"
+	@printf "\tmake rtl rtl2png\t\t\t:Convertir el RTL del TOP desde formato svg a png\n"
+	@printf "\tmake rtl rtl2png top=modulo1\t\t:Además de convertir, obtiene el RTL de otros modulos (submodulos)\n"
+	@printf "\tmake ConvertOneVerilogFile\t\t:Crear un único verilog del diseño\n"
 
 rtl: rtl-from-json view-svg
 
@@ -170,7 +179,7 @@ iverilog-compile:
 ifneq ($(MORE_SRC2SIM), )
 	cp -var $(MORE_SRC2SIM) $S
 endif
-	iverilog $(MACROS_SIM) -o $S/$(TBN).vvp -s $(TBN) $(TB_V) $(DESIGN)
+	iverilog $(MACROS_SIM) -o $S/$(TBN).vvp -s $(TBN) $(tb) $(DESIGN)
 
 # VVP_ARG permite agregar argumentos en la simulación con vvp
 VVP_ARG=
@@ -183,7 +192,7 @@ wave:
 MACROS_RTL := $(foreach macro,$(MACROS_RTL),"$(macro)")
 json-yosys: ## Generar json para el rtl de netlistsvg
 	mkdir -p $S
-	yosys $(MACROS_RTL) -p 'prep -top $(top); hierarchy -check; proc; write_json $S/$(top).json' $(DESIGN) -l $(LOG_YOSYS_RTL)
+	$(RUN) yosys $(MACROS_RTL) -p 'prep -top $(top); hierarchy -check; proc; write_json $S/$(top).json' $(DESIGN) -l $(LOG_YOSYS_RTL)
 
 log-rtl:
 	less $(LOG_YOSYS_RTL)
@@ -191,14 +200,14 @@ log-rtl:
 # Convertir el diseño en un solo archivo de verilog
 ConvertOneVerilogFile:
 	mkdir -p $S
-	yosys $(MACROS_SIM) -p 'prep -top $(top); hierarchy -check; proc; opt -full; write_verilog -noattr -nodec $S/$(top).v' $(DESIGN)
+	$(RUN) yosys $(MACROS_SIM) -p 'prep -top $(top); hierarchy -check; proc; opt -full; write_verilog -noattr -nodec $S/$(top).v' $(DESIGN)
 	# yosys -p 'read_verilog $(DESIGN); prep -top $(TOP); hierarchy -check; proc; opt -full; write_verilog -noattr -noexpr -nodec $S/$(TOP).v'
 	# yosys -p 'read_verilog $(DESIGN); prep -top $(TOP); hierarchy -check; proc; flatten; synth; write_verilog -noattr -noexpr $S/$(TOP).v'
 
 rtl-from-json: json-yosys
 	cp $S/$(top).json $S/$(top)_origin.json # Hacer una copia desde el archivo origen
 	sed -E 's/"\$$paramod\$$[^\\]+\\\\([^"]+)"/"\1"/g' $S/$(top)_origin.json > $S/$(top).json # Quitar parametros en el nombre del módulo para que sea legible.
-	netlistsvg $S/$(top).json -o $S/$(top).svg
+	$(RUN) netlistsvg $S/$(top).json -o $S/$(top).svg
 	## convert2SvgwithWhiteBackground
 	sed -i 's|<svg\([^>]*\)>|<svg\1>\n  <rect width="100%" height="100%" fill="white"/>|' $S/$(top).svg
 
@@ -206,14 +215,14 @@ view-svg:
 	eog $S/$(top).svg
 
 rtl-xdot:
-	yosys $(MACROS_SIM) -p $(RTL_COMMAND)
+	$(RUN) yosys $(MACROS_SIM) -p $(RTL_COMMAND)
 
 rtl2png:
 	convert -density 200 -resize 1200 $S/$(top).svg $(top).png
 	# convert -resize 1200 -quality 100 $S/$(TOP).svg $(TOP).png
 
 init-sim:	
-	@echo "sim/\n$Z/\n" > .gitignore
+	@printf "sim/\n$Z/\n" > .gitignore
 	touch README.md $(top).png
 
 RM=rm -rf
