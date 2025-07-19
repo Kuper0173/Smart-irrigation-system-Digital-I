@@ -31,7 +31,7 @@ module SOC (
   //#################################
   wire [6:0] cs;
   wire cs_uart = cs[0];  // cs_chip0
-  wire cs_chip1 = cs[1];  // cs_chip1
+  wire cs_hc_sr04 = cs[1];  // cs_chip1
   wire cs_mult = cs[2];  // cs_chip2
   wire cs_chip3 = cs[3];  // cs_chip3
   wire cs_chip4 = cs[4];  // cs_chip4
@@ -40,7 +40,7 @@ module SOC (
   chip_select chip_select (
       .mem_addr(mem_addr),
       .chip0_dout(uart_dout),  // 0x00400000
-      .chip1_dout(),  // 0x00410000
+      .chip1_dout(hc_sr04_dout),  // 0x00410000
       .chip2_dout(mult_dout),  // 0x00420000
       .chip3_dout(),  // 0x00430000
       .chip4_dout(),  // 0x00440000
@@ -99,6 +99,25 @@ module SOC (
       .rd(rd),
       .wr(wr),
       .d_out(mult_dout)
+  );
+
+  //######################################
+  //### DESCRIPCIÓN DE PERIFERICO hc_sr04 ###
+  //######################################
+  wire [31:0] hc_sr04_dout;
+per_hc_sr04 per_hc_sr04_1 (
+      .clk(clk),
+      .rst(!resetn),
+      .d_in(mem_wdata),
+      .cs(cs_hc_sr04),
+      .addr(mem_addr),
+      .rd(rd),
+      .wr(wr),
+      .d_out(hc_sr04_dout),
+      .echo(echo),
+      .trigger(trigger)
+      
+      
   );
 
   //######################################

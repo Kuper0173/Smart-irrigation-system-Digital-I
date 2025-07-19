@@ -3,7 +3,7 @@ clean: clean-syn clean-sim
 # top=top
 top=SOC
 #test bench del proyecto para la simulación
-tb?=$(top)_tb.v
+tb?=cores/hc_sr04/hc_sr04_tb.v
 MACROS_SIM=-DINIT=(2**24-10) -DBENCH -DSIM -DPASSTHROUGH_PLL -DBOARD_FREQ=27 -DCPU_FREQ=27
 MACROS_RTL=
 MACROS_SYN=
