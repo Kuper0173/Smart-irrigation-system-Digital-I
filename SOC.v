@@ -105,7 +105,7 @@ module SOC (
   //### DESCRIPCIÓN DE PERIFERICO hc_sr04 ###
   //######################################
   wire [31:0] hc_sr04_dout;
-per_hc_sr04 per_hc_sr04_1 (
+perip_hc_sr04 perip_hc_sr04 (
       .clk(clk),
       .rst(!resetn),
       .d_in(mem_wdata),
@@ -114,8 +114,8 @@ per_hc_sr04 per_hc_sr04_1 (
       .rd(rd),
       .wr(wr),
       .d_out(hc_sr04_dout),
-      .echo(echo),
-      .trigger(trigger)
+      .echo(ECHO),
+      .trigger(TRIGGER)
       
       
   );
