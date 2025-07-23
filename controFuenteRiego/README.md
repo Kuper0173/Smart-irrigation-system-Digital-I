@@ -23,9 +23,6 @@ La salida esta en funcion de la temperatura del ambiente la cual entre mayor sea
 
 <img width="1220" height="636" alt="Captura de pantalla de 2025-07-23 04-58-15" src="https://github.com/user-attachments/assets/e055b7b1-6c8a-44be-a8ad-acc20449a036" />
 
-- Comando utilizado: `make rtl`  
-- Para módulo específico: `make rtl top=modulo_especifico`
-
 `[Espacio para gráfica RTL principal]`  
 `[Espacio para gráfica RTL del módulo]`
 
