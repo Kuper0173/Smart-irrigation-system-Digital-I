@@ -1,0 +1,188 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+BRAM             0x0000000000000000 0x0000000000008000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+TARGET(elf32-littleriscv)
+
+.text           0x0000000000000000      0x7c8
+                0x0000000000000000                . = ALIGN (0x4)
+ *(.text.startup)
+ .text.startup  0x0000000000000000       0x38 crt0.o
+                0x0000000000000000                _start
+ *(.text*)
+ .text          0x0000000000000038        0x0 crt0.o
+ .text          0x0000000000000038        0x0 controladorderiego.o
+ .text.putchar_hex
+                0x0000000000000038       0xa4 controladorderiego.o
+                0x0000000000000038                putchar_hex
+ .text.main     0x00000000000000dc       0xd8 controladorderiego.o
+                0x00000000000000dc                main
+ .text          0x00000000000001b4        0x0 ./libs/uart.o
+ .text.putChar  0x00000000000001b4       0x6c ./libs/uart.o
+                0x00000000000001b4                putChar
+ .text.putstring
+                0x0000000000000220       0x5c ./libs/uart.o
+                0x0000000000000220                putstring
+ .text.getChar  0x000000000000027c       0x6c ./libs/uart.o
+                0x000000000000027c                getChar
+ .text.getstring
+                0x00000000000002e8       0xa8 ./libs/uart.o
+                0x00000000000002e8                getstring
+ .text          0x0000000000000390        0x0 ./libs/utilities.o
+ .text.atoi_simple_signed
+                0x0000000000000390       0xf8 ./libs/utilities.o
+                0x0000000000000390                atoi_simple_signed
+ .text.itoa_simple_signed
+                0x0000000000000488      0x16c ./libs/utilities.o
+                0x0000000000000488                itoa_simple_signed
+ .text.mi_strcat
+                0x00000000000005f4       0x78 ./libs/utilities.o
+                0x00000000000005f4                mi_strcat
+ .text          0x000000000000066c        0x0 ./libs/math.o
+ .text.mult_hw  0x000000000000066c       0x88 ./libs/math.o
+                0x000000000000066c                mult_hw
+ .text          0x00000000000006f4        0x0 ./libs/time.o
+ .text.wait     0x00000000000006f4       0x48 ./libs/time.o
+                0x00000000000006f4                wait
+ *(.rodata*)
+ .rodata.hello  0x000000000000073c       0x1d controladorderiego.o
+                0x000000000000073c                hello
+ *fill*         0x0000000000000759        0x3 
+ .rodata        0x000000000000075c       0x43 controladorderiego.o
+ *fill*         0x000000000000079f        0x1 
+ .rodata        0x00000000000007a0       0x28 ./libs/utilities.o
+
+.sdata2.turbidez_reg
+                0x00000000000007c8        0x4
+ .sdata2.turbidez_reg
+                0x00000000000007c8        0x4 controladorderiego.o
+                0x00000000000007c8                turbidez_reg
+
+.sdata2.ready_reg
+                0x00000000000007cc        0x4
+ .sdata2.ready_reg
+                0x00000000000007cc        0x4 controladorderiego.o
+                0x00000000000007cc                ready_reg
+
+.sdata2.enable_esp_rd
+                0x00000000000007d0        0x4
+ .sdata2.enable_esp_rd
+                0x00000000000007d0        0x4 controladorderiego.o
+                0x00000000000007d0                enable_esp_rd
+
+.sdata2.led_valvula_rd
+                0x00000000000007d4        0x4
+ .sdata2.led_valvula_rd
+                0x00000000000007d4        0x4 controladorderiego.o
+                0x00000000000007d4                led_valvula_rd
+
+.sdata2.uart_dat
+                0x00000000000007d8        0x4
+ .sdata2.uart_dat
+                0x00000000000007d8        0x4 ./libs/uart.o
+                0x00000000000007d8                uart_dat
+
+.sdata2.uart_cntl
+                0x00000000000007dc        0x4
+ .sdata2.uart_cntl
+                0x00000000000007dc        0x4 ./libs/uart.o
+                0x00000000000007dc                uart_cntl
+
+.sdata2.mult_op_a
+                0x00000000000007e0        0x4
+ .sdata2.mult_op_a
+                0x00000000000007e0        0x4 ./libs/math.o
+                0x00000000000007e0                mult_op_a
+
+.sdata2.mult_op_b
+                0x00000000000007e4        0x4
+ .sdata2.mult_op_b
+                0x00000000000007e4        0x4 ./libs/math.o
+                0x00000000000007e4                mult_op_b
+
+.sdata2.mult_init
+                0x00000000000007e8        0x4
+ .sdata2.mult_init
+                0x00000000000007e8        0x4 ./libs/math.o
+                0x00000000000007e8                mult_init
+
+.sdata2.mult_result
+                0x00000000000007ec        0x4
+ .sdata2.mult_result
+                0x00000000000007ec        0x4 ./libs/math.o
+                0x00000000000007ec                mult_result
+
+.sdata2.mult_done
+                0x00000000000007f0        0x4
+ .sdata2.mult_done
+                0x00000000000007f0        0x4 ./libs/math.o
+                0x00000000000007f0                mult_done
+
+.rela.dyn       0x00000000000007f4        0x0
+ .rela.text.startup
+                0x00000000000007f4        0x0 crt0.o
+
+.data           0x00000000000007f4        0x0
+                0x00000000000007f4                . = ALIGN (0x4)
+ *(.data*)
+ .data          0x00000000000007f4        0x0 crt0.o
+ .data          0x00000000000007f4        0x0 controladorderiego.o
+ .data          0x00000000000007f4        0x0 ./libs/uart.o
+ .data          0x00000000000007f4        0x0 ./libs/utilities.o
+ .data          0x00000000000007f4        0x0 ./libs/math.o
+ .data          0x00000000000007f4        0x0 ./libs/time.o
+
+.bss            0x00000000000007f4        0x0
+                0x00000000000007f4                . = ALIGN (0x4)
+                0x00000000000007f4                __bss_start = .
+ *(.bss*)
+ .bss           0x00000000000007f4        0x0 crt0.o
+ .bss           0x00000000000007f4        0x0 controladorderiego.o
+ .bss           0x00000000000007f4        0x0 ./libs/uart.o
+ .bss           0x00000000000007f4        0x0 ./libs/utilities.o
+ .bss           0x00000000000007f4        0x0 ./libs/math.o
+ .bss           0x00000000000007f4        0x0 ./libs/time.o
+ *(COMMON)
+                0x00000000000007f4                __bss_end = .
+
+.stack          0x00000000000007f4      0x400
+                0x00000000000007f4                _stack_start = .
+                0x0000000000000bf4                . = (. + 0x400)
+ *fill*         0x00000000000007f4      0x400 
+                0x0000000000000bf4                _stack_end = .
+                0x0000000000000bf4                _stack_top = .
+LOAD crt0.o
+LOAD controladorderiego.o
+LOAD ./libs/uart.o
+LOAD ./libs/utilities.o
+LOAD ./libs/math.o
+LOAD ./libs/time.o
+OUTPUT(firmware.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x0000000000000000       0x1c
+ .riscv.attributes
+                0x0000000000000000       0x1a crt0.o
+ .riscv.attributes
+                0x000000000000001a       0x1c controladorderiego.o
+ .riscv.attributes
+                0x0000000000000036       0x1c ./libs/uart.o
+ .riscv.attributes
+                0x0000000000000052       0x1c ./libs/utilities.o
+ .riscv.attributes
+                0x000000000000006e       0x1c ./libs/math.o
+ .riscv.attributes
+                0x000000000000008a       0x1c ./libs/time.o
+
+.comment        0x0000000000000000       0x15
+ .comment       0x0000000000000000       0x15 controladorderiego.o
+                                         0x16 (size before relaxing)
+ .comment       0x0000000000000015       0x16 ./libs/uart.o
+ .comment       0x0000000000000015       0x16 ./libs/utilities.o
+ .comment       0x0000000000000015       0x16 ./libs/math.o
+ .comment       0x0000000000000015       0x16 ./libs/time.o
