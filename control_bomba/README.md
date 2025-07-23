@@ -571,6 +571,30 @@ Flip-flop con doble señal de set. Se emplean en sistemas con múltiples fuentes
 | **ICESTORM_PLL**    | 0          | 2                | 0%          | Módulos PLL usados para generación/modificación de relojes (no usados).    |
 | **SB_WARMBOOT**     | 0          | 1                | 0%          | Módulo para reinicio en caliente (warmboot), no utilizado en este diseño.  |
 
+**ICESTORM_LC** (Logic Cells)
+
+Se utilizaron 1389 celdas lógicas de las 7680 disponibles (18%). Estas celdas contienen LUTs (tablas de verdad programables) y flip-flops, y son los bloques fundamentales que implementan la lógica combinacional y secuencial del sistema.
+
+**ICESTORM_RAM**
+
+- Se usaron 20 bloques de RAM interna de los 32 disponibles (62%). Estas memorias se utilizan para almacenar datos temporales o estructuras específicas que requieren acceso rápido por parte del SoC o periféricos.
+
+**SB_IO** (Input/Output Pins)
+
+- Se emplearon 8 pines de E/S de los 256 disponibles (3%). Estos pines permiten la comunicación con dispositivos externos, como sensores, microcontroladores o módulos UART.
+
+**SB_GB** (Global Buffers)
+
+- Se usaron 7 buffers globales de 8 posibles (87%). Estos buffers distribuyen señales críticas como relojes (clocks) y señales de control a través de todo el chip de forma eficiente y sincronizada.
+
+**ICESTORM_PLL**
+
+- No se utilizó ningún PLL (Phase-Locked Loop), de los 2 disponibles (0%). Los PLL son útiles para generar relojes con frecuencias distintas o fases ajustadas, pero en este diseño no fueron necesarios.
+
+**SB_WARMBOOT**
+- El módulo de reinicio en caliente (warmboot) no se utilizó (0/1). Este componente permite cambiar entre diferentes imágenes de configuración del FPGA sin necesidad de reiniciar físicamente el dispositivo, y puede ser útil para actualizaciones dinámicas del sistema.
+
+
 ##
 ¿Còmo interactùa con entornos externos?
 Explicación sobre el cómo interactúa con aplicaciones externas (mqtt, chuck) etc.
