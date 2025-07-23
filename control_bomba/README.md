@@ -523,39 +523,39 @@ Indica la cantidad total de celdas lógicas utilizadas. Estas celdas son primiti
 
 **SB_CARRY** : 266
 
-Celdas dedicadas a operaciones aritméticas, especialmente a la propagación de acarreo en sumadores. Son fundamentales en operaciones como conteo, suma y comparación.
+- Celdas dedicadas a operaciones aritméticas, especialmente a la propagación de acarreo en sumadores. Son fundamentales en operaciones como conteo, suma y comparación.
 
 **SB_DFF** : 35
 
-Flip-flops tipo D básicos, usados para almacenar bits individuales en circuitos secuenciales. Se activan en el flanco de reloj y almacenan el valor de entrada D.
+- Flip-flops tipo D básicos, usados para almacenar bits individuales en circuitos secuenciales. Se activan en el flanco de reloj y almacenan el valor de entrada D.
 
 **SB_DFFE** : 136
 
-Flip-flops tipo D con habilitación (enable). Solo almacenan datos cuando la señal de habilitación está activa, permitiendo ahorrar recursos y evitar cambios innecesarios.
+- Flip-flops tipo D con habilitación (enable). Solo almacenan datos cuando la señal de habilitación está activa, permitiendo ahorrar recursos y evitar cambios innecesarios.
 
 **SB_DFFER**: 85
 
-Variante del flip-flop D con habilitación y señal de reinicio (reset). Permite inicializar o limpiar el contenido del flip-flop cuando se necesita.
+- Variante del flip-flop D con habilitación y señal de reinicio (reset). Permite inicializar o limpiar el contenido del flip-flop cuando se necesita.
 
 **SB_DFFESR** : 126
 
-Flip-flop más complejo que incluye habilitación, señal de set y reset. Ideal para controladores que requieren múltiples condiciones de control para establecer o reiniciar el estado.
+- Flip-flop más complejo que incluye habilitación, señal de set y reset. Ideal para controladores que requieren múltiples condiciones de control para establecer o reiniciar el estado.
 
 **SB_DFFESS** : 1
 
-Variante de flip-flop con señal de set y habilitación simultáneas. Muy específico para lógicas de control donde se debe forzar un 1 bajo condiciones controladas.
+- Variante de flip-flop con señal de set y habilitación simultáneas. Muy específico para lógicas de control donde se debe forzar un 1 bajo condiciones controladas.
 
 **SB_DFFR** : 3
 
-Flip-flop tipo D con reset asíncrono. Este tipo permite reiniciar su valor independientemente del reloj, útil en situaciones donde se necesita una limpieza inmediata del sistema.
+- Flip-flop tipo D con reset asíncrono. Este tipo permite reiniciar su valor independientemente del reloj, útil en situaciones donde se necesita una limpieza inmediata del sistema.
 
 **SB_DFFSR** : 18
 
-Flip-flops con set y reset asíncronos, que permiten forzar valores altos o bajos bajo condiciones específicas, sin depender del reloj del sistema.
+- Flip-flops con set y reset asíncronos, que permiten forzar valores altos o bajos bajo condiciones específicas, sin depender del reloj del sistema.
 
 **SB_DFFSS** : 4
 
-Flip-flop con doble señal de set. Se emplean en sistemas con múltiples fuentes de activación forzada del estado alto (set).
+- Flip-flop con doble señal de set. Se emplean en sistemas con múltiples fuentes de activación forzada del estado alto (set).
 ##
 
 **make log-pnr**
