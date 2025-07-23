@@ -33,6 +33,46 @@ Los componentes clave utilizados en este proyecto son:
 - **Displays de 7 segmentos**: Se utilizaron dos displays de 7 segmentos para mostrar la temperatura de manera visual. Cada display muestra un dígito de la temperatura medida. El sistema está configurado para usar un multiplexado simple para mostrar los dos dígitos.
 - **ESP32**: Módulo de comunicaciones inalámbricas (WiFi y Bluetooth) que se utilizará para enviar una alerta cuando el sistema lo requiera de forma manual.
 
+## Requerimientos Funcionales del Proyecto 
+
+### 1. Medición de Temperatura 
+
+- El sistema debe ser capaz de leer la temperatura ambiental mediante el sensor **DHT11**.
+- La lectura de la temperatura debe ser procesada correctamente por la FPGA, utilizando un diseño en **Verilog** para la conversión de la señal digital del **DHT11** a un valor binario.
+
+### 2. Visualización de la Temperatura 
+
+- La temperatura leída debe ser convertida en formato **BCD** para su visualización.
+- La temperatura debe ser mostrada en dos **displays de 7 segmentos**. El display de la **unidad** (derecho) mostrará las unidades de la temperatura, mientras que el display de la **decena** (izquierdo) mostrará las decenas de la temperatura.
+- El sistema debe utilizar un **multiplexado** para alternar entre los dos displays y mostrar de manera eficiente los valores de la temperatura.
+
+### 3. Envío de Alerta Manual 
+
+- El sistema debe permitir la activación manual de la alerta mediante un módulo **ESP32**.
+- La alerta debe enviarse a través de **WiFi** utilizando el módulo **ESP32**.
+- La alerta debe enviarse a una **aplicación o servidor en línea** para su visualización.
+- La alerta debe ser activada manualmente por el usuario a través de un mecanismo de control definido (por ejemplo, un botón o comando específico).
+
+### 4. Interfaz con la Consola 
+
+- El sistema debe ser capaz de leer y mostrar la temperatura de forma manual desde la **consola**.
+- La temperatura leída de la consola debe ser procesada y visualizada correctamente en los displays de 7 segmentos.
+
+### 5. Integración de Componentes 
+
+- El sistema debe integrar correctamente la lectura del sensor **DHT11**, la conversión de temperatura, la visualización en los displays de 7 segmentos y el envío de alerta mediante el **ESP32**.
+- Los componentes de la FPGA, el **DHT11**, los displays de 7 segmentos y el **ESP32** deben interactuar de forma eficiente a través de los periféricos y las señales de control configuradas en **Verilog**.
+
+### 6. Fiabilidad del Sistema 
+
+- El sistema debe funcionar de manera confiable en el entorno de laboratorio, con mediciones precisas de temperatura y alertas manuales efectivas.
+- Debe ser posible modificar los valores de temperatura y visualizarlos de manera correcta en tiempo real, tanto en los displays de 7 segmentos como en la consola.
+
+### 7. Soporte para Futuras Integraciones 
+
+- El sistema debe estar preparado para integrarse fácilmente con redes **MQTT** o otros protocolos de comunicación, aunque la integración completa del broker de la red no se aborda en este proyecto.
+
+
 ## Herramientas y Lenguajes Utilizados
 
 - **Lenguaje de Descripción de Hardware (HDL): Verilog** fue utilizado para diseñar el sistema digital en la FPGA, permitiendo leer los datos del sensor, procesarlos y mostrarlos en los displays.
@@ -63,27 +103,24 @@ Se crea un periférico específico para gestionar la lectura del sensor DHT11 y 
 
 El **ESP32** se utiliza para enviar una alerta cuando se desee de forma manual. El sistema permite la activación manual de este proceso, enviando una notificación a través de **WiFi** a una aplicación o servidor en línea.
 
-## Problemas Encontrados
-
-Durante el desarrollo del proyecto, se presentaron algunos problemas técnicos relacionados con el sensor **DHT11**. A pesar de que inicialmente se planeó utilizar este sensor para leer la temperatura y activar la alerta cuando la temperatura excediera un umbral predefinido, se encontraron dificultades en la comunicación del sensor con la FPGA.
-
-- **Problema con el Sensor DHT11**: El sistema no funcionó correctamente con el sensor DHT11 en la implementación inicial. La lectura de los datos no se realizaba de forma confiable, lo que generaba errores en la medición de la temperatura.
-  
-- **Solución**: Debido a esto, el sistema fue ajustado para **leer la temperatura por consola** en lugar de depender directamente del sensor. La temperatura leída es mostrada correctamente en los displays de siete segmentos, y el valor es procesado y visualizado sin problemas.
-
-- **Alerta Manual con ESP32**: En lugar de activar la alerta automáticamente al superar un umbral de temperatura, la alerta ahora es enviada **manual** mediante el **ESP32**, lo que permite a los usuarios controlar cuándo se desea enviar la notificación.
 
 ## Diagrama de Conexión
 
 A continuación, se muestra el diagrama de conexiones entre los componentes principales:
 
-![Diagrama de Conexión]([ruta/a/tu/diagrama.png](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Mapa%20de%20conexiones.jpg))
+![Diagrama de Conexión](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Mapa%20de%20conexiones.jpg)
 
 Este diagrama ilustra cómo están conectados los pines de la FPGA BlackIceMX al sensor **DHT11**, los displays de 7 segmentos y el módulo **ESP32** para el envío de alertas. Los pines están configurados de acuerdo a la asignación especificada en el archivo **SOC.pcf**.
 
 ## Diagrama de Flujo
 
 El siguiente diagrama de flujo describe el comportamiento general del sistema:
+![Flujo1](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Flujo1.jpg)
+
+![Flujo2](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Flujo%202.jpg)
+
+
+
 
 1. **Lectura del DHT11**: La FPGA lee la temperatura del sensor DHT11.
 2. **Procesamiento de la Temperatura**: Los datos leídos son procesados en Verilog y convertidos a formato BCD para su visualización.
@@ -96,6 +133,17 @@ El siguiente diagrama de flujo describe el comportamiento general del sistema:
 - **Medición precisa de temperatura**: El sistema debe ser capaz de leer correctamente la temperatura del **DHT11** o, en su defecto, mostrar los datos ingresados manualmente.
 - **Visualización correcta**: La temperatura debe ser mostrada en los dos displays de 7 segmentos.
 - **Alerta manual**: El sistema debe ser capaz de enviar una alerta a través de la conexión con el **ESP32** de forma manual, que posteriormente envíe la información a un servidor en línea.
+
+## Problemas Encontrados
+
+Durante el desarrollo del proyecto, se presentaron algunos problemas técnicos relacionados con el sensor **DHT11**. A pesar de que inicialmente se planeó utilizar este sensor para leer la temperatura y activar la alerta cuando la temperatura excediera un umbral predefinido, se encontraron dificultades en la comunicación del sensor con la FPGA.
+
+- **Problema con el Sensor DHT11**: El sistema no funcionó correctamente con el sensor DHT11 en la implementación inicial. La lectura de los datos no se realizaba de forma confiable, lo que generaba errores en la medición de la temperatura.
+  
+- **Solución**: Debido a esto, el sistema fue ajustado para **leer la temperatura por consola** en lugar de depender directamente del sensor. La temperatura leída es mostrada correctamente en los displays de siete segmentos, y el valor es procesado y visualizado sin problemas.
+
+- **Alerta Manual con ESP32**: En lugar de activar la alerta automáticamente al superar un umbral de temperatura, la alerta ahora es enviada **manual** mediante el **ESP32**, lo que permite a los usuarios controlar cuándo se desea enviar la notificación.
+
 
 ## Conclusión
 
