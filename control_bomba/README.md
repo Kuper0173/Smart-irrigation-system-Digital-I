@@ -353,6 +353,36 @@ Este muestra sólo la lógica del módulo HC-SR04: cómo se manejan las señales
 
 ![Imagen de WhatsApp 2025-07-23 a las 21 17 00_79c415ae](https://github.com/user-attachments/assets/49cf3bad-f009-4fae-a5d2-43b866773af8)
 
+**Generador del pulso trigger**
+
+- A partir del reloj (clk) y un contador, se genera un pulso de duración fija.
+- Este pulso se envía al sensor por la señal trigger.
+- El trigger se activa al comienzo de la medición y se desactiva automáticamente tras unos ciclos.
+
+**Captura del echo**
+
+- Cuando el sensor recibe el pulso de trigger, responde con una señal echo cuyo ancho representa el tiempo de ida y vuelta de la onda ultrasónica.
+- El sistema detecta el flanco de subida del echo para comenzar a contar.
+- Detecta el flanco de bajada para detener el contador.
+-  El valor del contador en este intervalo representa el tiempo de vuelo del sonido (proporcional a la distancia).
+
+**Registro y cálculo de la distancia**
+
+- El valor medido se guarda en un registro.
+- Un par de multiplexores permiten seleccionar y cargar ese valor en la salida distance.
+- El procesamiento adicional como escalamiento (dividir por una constante) puede implementarse en firmware.
+
+**Comparador con el umbral**
+
+- La señal umbral de 16 bits se compara con la distancia calculada.
+- Si la distancia es menor que el umbral, se activa una señal lógica.
+- Esta señal de comparación genera la salida activar, útil para encender una bomba o activar un actuador.
+
+**Control interno (FSM implícita)**
+
+- Multiplexores y selectores internos dirigen el flujo de datos en función del estado del sistema: reinicio, espera, medición, comparación.
+- Varios bloques realizan selección de entradas y salidas según condiciones binarias (por ejemplo, selección entre 0x0 y 0x1).
+- El sistema se reinicia con la señal rst y opera sincronizado con el reloj clk.
 
 **RLT PERIP**
 
