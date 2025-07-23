@@ -505,18 +505,24 @@ Indica la cantidad total de celdas lógicas utilizadas. Estas celdas son primiti
 ## 🔁 Diagrama de flujo del análisi 
 
 flowchart TD
-    A[Inicio del análisis de síntesis] --> B[Lectura del diseño HDL]
-    B --> C[Generación de netlist]
-    C --> D[Asignación de wires]
-    D --> E{¿Hay memoria?}
-    E -- No --> F[Memorias utilizadas: 0]
-    E -- Sí --> G[Contar memoria y procesos]
-    F --> H[Contar bits y wires públicos]
-    G --> H
-    H --> I[Calcular total de celdas utilizadas]
-    I --> J[Generar informe de recursos]
-    J --> K[Fin del análisis]
-
+    A[Inicio] --> B[Lectura del diseño de hardware]
+    B --> C[Asignación de wires]
+    C --> D{¿Wire público?}
+    D -- Sí --> E[Incrementa contador de wires públicos]
+    D -- No --> F[Continúa]
+    E --> G[Acumulación de bits en wires públicos]
+    F --> G
+    G --> H{¿Memoria requerida?}
+    H -- No --> I[Bits de memoria = 0]
+    H -- Sí --> J[Asignar memoria y contar bits]
+    I --> K{¿Procesos definidos?}
+    J --> K
+    K -- No --> L[Procesos = 0]
+    K -- Sí --> M[Contar procesos definidos]
+    L --> N[Contar celdas utilizadas]
+    M --> N
+    N --> O[Mostrar resultados de utilización]
+    O --> P[Fin]
 
 
 ###  Tipos de celdas utilizadas
