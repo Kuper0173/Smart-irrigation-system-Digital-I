@@ -138,7 +138,7 @@ El siguiente diagrama de flujo describe el comportamiento general del sistema:
 
 ## Arquitectura del Sistema
 
-![Flujo2](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Arquitectura.jpg)
+![Flujo2](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Arq.jpg)
 
 La figura muestra la interacción entre los módulos lógicos y los dispositivos físicos que componen el proyecto:
 
