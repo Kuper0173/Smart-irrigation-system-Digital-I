@@ -1,287 +1,253 @@
-<!-- LTeX: enabled=true language=es -->
-<!-- :set spell! -->
-<!-- :MarkdownPreview -->
-<!-- :GenTocMarked -->
+# Proyecto Electrónica Digital I  
+## Sensor de turbidez de agua  
 
-# SoC FemtoRiscv32i
+En este repositorio se explicará todo lo propuesto y desarrollado en el proyecto de electrónica digital paso a paso.
 
-![SoC FemtoR32i](./docs/SOC.svg)
+### Integrantes:
+- Christian Camilo Cardenas
+chcardenasr@unal.edu.co 
+- Sebastián Tibaquirá Sánchez
+stibaquira@unal.edu.co
+- Anderson Camilo Rosero Yela
+aroseroy@unal.edu.co 
+- Daniel santiago Navarro Gil
+dnavarrog@unal.edu.co
 
-A continuación se presenta el diseño y configuración de un SoC basado en el FemtoRiscv32i (RV32I), como se muestra en la imagen superior.  
-Este diseño es el resultado de diversas experiencias en la enseñanza del diseño de sistemas digitales, orientadas por el profesor Carlos Camargo de la Universidad Nacional de Colombia, las cuales he documentado y adaptado con fines pedagógicos.
 
-Este SoC incorpora un procesador RV32I con el conjunto de instrucciones base, una memoria RAM para la carga de instrucciones y la ejecución del programa, un decodificador de direcciones (*address decoder*) y un *chip select* para gestionar el flujo de información entre los distintos periféricos.  
-En este ejemplo, los periféricos implementados son:  
-- Una UART para la comunicación entre el CPU y el exterior,  
-- y un periférico de multiplicación por hardware, que sirve como punto de partida para el diseño de otros periféricos específicos según la aplicación.
+## Introducción
 
-El flujo de diseño, tanto de hardware como de software, es completamente *opensource*/*openhardware*, haciendo uso de herramientas como **Yosys**, **Nextpnr**, **Netlistsvg**, el compilador **GCC**, entre otras.
-
-A grandes rasgos, el flujo de diseño consta de tres pasos:
-
-1. Compilación de las tareas de software para el RV32I en lenguaje **C** ([./firmware/c-code/](./firmware/c-code/)) o en **ASM** ([./firmware/asm/](./firmware/asm/)), utilizando el *toolchain* de GCC para RISC-V.
-2. Síntesis del SoC desde el `Makefile` (`./Makefile`) ubicado en este directorio, empleando herramientas como **Yosys** y **Nextpnr**.
-3. Configuración del diseño en la FPGA.
-
-> **A tener en cuenta**: Para poder replicar este ejemplo, por favor descarga el archivo [femtoriscv.zip](./femtoriscv.zip).
-
-## Implementación SoC en FPGA y ESP32 como interfaz
-
-![fpga-ftdi-esp32](./docs/colorlight-ftdi232rl-esp32.jpg)
-
-
-Para que el soc tenga una capacidad mayor de integración, en este ejemplo se
-integra un microcontrolador **ESP32** que puede servir para 3 propósitos específicos:
-
-- Ser un bridge entre la UART de la FPGA y una comunicación serial, que permita la
-comunicación guida con otros sistemas como por ejemplo un PC.
-- Ser un bridge entre la UART y una comunicación no guiada (WiFi) o Bluetooth, de
-tal manera que el SoC puede ser parte de una solución en red y que pueda
-exponer servicios consumibles en red.
-- Si la FPGA no cuenta con un periférico ADC, se puede aprovechar el
-periférico ADC del ESP32 y devolver los datos de conversión al SoC para los
-propósitos de procesamiento.
+La calidad del agua es un factor determinante tanto en la salud humana como en la eficiencia de los cultivos agrícolas. Uno de los parámetros fundamentales para evaluar dicha calidad es la turbidez, que representa la cantidad de partículas suspendidas en el agua, como sedimentos, materia orgánica y microorganismos. Diversos estudios han demostrado que niveles elevados de turbidez están asociados a consecuencias negativas para la salud pública y la productividad agrícola.
 
-### Configurar el ESP32 como bridge UART
+En particular, un estudio publicado en el Journal of Water and Health señala que el uso de agua con turbidez muy superior a los estándares recomendados por la OMS puede implicar riesgos serios para la inocuidad de alimentos y la salud de los consumidores. En este estudio, el agua utilizada para riego en zonas urbanas presentaba turbidez hasta 17 veces mayor al límite permitido, generando un ambiente propicio para la proliferación de microorganismos patógenos y la contaminación cruzada de los cultivos  
+Fuente: [Irrigation water quality and its impact on the microbial safety of irrigated vegetables in Kumasi, Ghana – IWA Publishing, 2021](https://iwaponline.com/jwh/article/19/3/488/80111/Irrigation-water-quality-and-its-impact-on-the)
 
-![fpga-esp32](./docs/soc-esp32_picocom.svg)
+Motivados por estas problemáticas, desarrollamos este proyecto con el objetivo de diseñar un sistema de monitoreo digital de turbidez basado en un sensor óptico y un microcontrolador ESP32, que permite detectar de forma continua los niveles de partículas suspendidas en el agua y emitir alertas si estos superan un umbral seguro. La idea es que este sistema pueda ser aplicado en contextos rurales o urbanos con acceso limitado a análisis de laboratorio, facilitando la toma de decisiones rápidas en cuanto al uso del agua para consumo o riego.
 
-Se requiere ahora cablear el esp32 a la FPGA. Para este propósito, deberá
-prestar especial atención al diagrama de arriba donde se señalan los elementos
-a cablear con color azul. Observe además que cada puerto de cada componente
-tiene señalado el número de pin a usar para ello vísite la información
-relacionada al pinout tanto de la FPGA como del esp32 a usar.
-
-Seguido, podrá realizar el proceso de flashing del esp32 como de la ejecución del programa
-de ejemplo corriendo en el SoC.
-
-1. Instalar las dependencias de flashing del esp32. Para ello, ejecute estos pasos:
-
-```bash
-sudo apt install picocom g++
-conda activate digital # Active la variable de entorno de digital
-pip install click esptool pyyaml adafruit-ampy
-```
-
-> **Observación**: en el caso de no ser compatible la variable de entorno
-> **generando error**, podría crear una nueva variable de entorno con conda que
-> soporte los paquetes a instalar, por ejemplo: (Ver Details)
-
-<details>
-
-```bash
-# Ejecutar estos pasos solo si los pasos anteriores del punto 1. fallaron
-conda create --name esp32
-conda activate esp32
-pip install click esptool pyyaml adafruit-ampy
-```
-> Tenga presente que para desactivar el entorno basta con `conda deactivate`.
-</details>
-
-2. Desde la [página oficial de descargas de Micropython para el
-   ESP32](https://micropython.org/download/ESP32_GENERIC/) descargue la útima
-versión de micropython disponibles para el esp32, en este caso se trata de la
-versión
-[v1.25.0(2025-4-15).bin](https://micropython.org/resources/firmware/ESP32_GENERIC-20250415-v1.25.0.bin),
-para tal finalidad puede ejecutar el siguiente comando:
-
-```bash
-wget -O micropython-esp32.bin "https://micropython.org/resources/firmware/ESP32_GENERIC-20250415-v1.25.0.bin"
-```
-
-3. Instale micropython en el esp32. Para ello solo deje conectado el esp32 en
-   los puertos USB del PC así logrará que el instalador detecte automáticamente
-el bridge del esp32 para su flashing. Ejecute los siguientes comandos:
-
-```bash
-# Recuerde tener activa la variable de entorno donde tienen instalada las librerías de python
-esptool.py erase_flash
-esptool.py --baud 460800 write_flash 0x1000 micropython-esp32.bin
-```
-
-Resultado:
-
-<details>
-
-```bash
-esptool.py v4.7.0
-Found 6 serial ports
-Serial port /dev/ttyUSB0
-Connecting......................................
-/dev/ttyUSB1 failed to connect: Failed to connect to Espressif device: No serial data received.
-For troubleshooting steps visit: https://docs.espressif.com/projects/esptool/en/latest/troubleshooting.html
-Serial port /dev/ttyUSB1
-Connecting....
-Detecting chip type... Unsupported detection protocol, switching and trying again...
-Connecting.....
-Detecting chip type... ESP32
-Chip is ESP32-D0WDQ6 (revision v1.0)
-Features: WiFi, BT, Dual Core, 240MHz, VRef calibration in efuse, Coding Scheme None
-Crystal is 40MHz
-MAC: a4:cf:12:74:fd:e4
-Uploading stub...
-Running stub...
-Stub running...
-Erasing flash (this may take a while)...
-Chip erase completed successfully in 7.6s
-Hard resetting via RTS pin...
-```
-
->  **Observación**: En el caso de que no haga flashing, oprima el botón de BOOT en el esp32:
-
-</details>
-
-
-4. Abra una terminal e interactúe con Micropython el cual usa una sintaxis de Python3. Para ello, ejecute los siguientes comandos:
-
-```bash
-# Verifique el archivo representativo del puerto serial del esp32, es probable que sea /dev/ttyUSB1
-picocom /dev/ttyUSB1 -b 115200 # Dependiendo del archivo representativo el tty puede cambiar
-```
-
-Resultado:
-
-<details>
-
-  ```py
-picocom /dev/ttyUSB1 -b 115200
-picocom v3.1
-
-port is        : /dev/ttyUSB1
-flowcontrol    : none
-baudrate is    : 115200
-parity is      : none
-databits are   : 8
-stopbits are   : 1
-escape is      : C-a
-local echo is  : no
-noinit is      : no
-noreset is     : no
-hangup is      : no
-nolock is      : no
-send_cmd is    : sz -vv
-receive_cmd is : rz -vv -E
-imap is        : 
-omap is        : 
-emap is        : crcrlf,delbs,
-logfile is     : none
-initstring     : none
-exit_after is  : not set
-exit is        : no
-
-Type [C-a] [C-h] to see available commands
-Terminal ready
-
->>> print("hello")
-hello
->>> 
-```
-
-</details>
-
-Para salir de `picocom`, ejecute la secuencia **CTRL+a** y luego **CTRL+x**.
-
-5. Cargue un script de Micropython en el esp32 para realizar el puente entre la FPGA y el esp32.
-Para tal finalidad, cree un archivo `main.py` (también lo puede encontrar en [./docs/main.py](./docs/main.py)) y agregue el siguiente contenido:
-
-```py
-from machine import UART
-from time import sleep
-
-uart_fpga = None
-uart_usb = None
-
-def init():
-    global uart_usb
-    global uart_fpga
-    # UART0: ahora libre
-    uart_usb = UART(1, baudrate=115200, tx=1, rx=3)
-    # UART2: FPGA
-    uart_fpga = UART(2, baudrate=57600, tx=17, rx=16)
-
-def bridge_uart():
-    while True:
-        if uart_fpga.any():
-            uart_usb.write(uart_fpga.read())
-        if uart_usb.any():
-            uart_fpga.write(uart_usb.read())
-        sleep(0.001)
-
-def start():
-    init()
-    bridge_uart()
-
-```
-
-A continuación suba el script `main.py` al esp32. Para ello ejecuta el siguiente comando:
-
-```bash
-ampy -p /dev/ttyUSB1 -b 115200 put main.py
-```
-
-### Síntesis y configuración del SoC en la FPGA
-
-![Conexión fpga-bridge](./docs/soc-esp32_fpga_bridge.svg)
-
-En esta parte del proceso se debe realizar la conexión entre los dispositivos
-que se observan en la imagen de arriba de color verde. Observe que deberá
-cablear el FT232RL con el puerto JTAG de la FPGA responsable de la
-configuración. Recuerde que debe tener instaladas las herramientas de diseño
-que encontrará en el
-[README.md](https://github.com/johnnycubides/digital-electronic-1-101/tree/main)
-de este repositorio. Si aún no ha realizado el proceso de configuración de un
-proyecto para esta FPGA, visita el siguiente enlace:
-
-[Configuración volatíl y persistente para esta FPGA](https://github.com/johnnycubides/digital-electronic-1-101/tree/main/fpga-example/colorlight-5a-75e)
-
-
-Seguido, deberá ejecutar los siguientes comandos para realizar el proceso de
-implementación del SoC en la FPGA:
-
-```bash
-cd ./firmware/ && make firmware_words && cd .. # Generar tradutor bin a palabras. Solo se ejecuta una ÚNICA VEZ
-make c-clean c-build # Creación ejecutable de riscv32i
-make clean syn # Crear el bitstream para configurar la fpga
-make config # Configurar fpga
-```
-
-Si la terminal entrega resultados sin errores podría continuar el siguiente paso.
-
-
-### Prueba de funcionamiento
-
-Inicie el script y arranque el programa en la FPGA. Para tal finalidad abra otra terminal y en ella
-ejecute el comando picocom para ver el prompt de python asociado al esp32, por ejemplo:
-
-```bash
-picocom /dev/ttyUSB1 -b 115200 # Dependiendo del archivo representativo el tty puede cambiar
-```
-
-Ahora para verificar el funcionamiento, en el prompt de micropython, ejecute la
-instrución `start()` y luego, en la tarjeta de la FPGA, oprima el botón de
-**RESET** (sino sabe cual es, deberá revisar el archivo de restricciones
-físicas, archivo SOC.lpf), además, el objeto que representa el reset, lo puede
-encontrar en el archivo
-[./docs/colorlight-5a-75e-v8.2.drawio.pdf](./docs/colorlight-5a-75e-v8.2.drawio.pdf).
-Después de pulsar el reset, verá en la terminal un resultado similar al
-siguiente:
-
-```py
->>> start() # Oprima reset en la FPGA
-# Mostrará las diferentes operaciones de multiplicación
-2x3=6
-2x4=8
-2x5=10
-2x6=12
-2x7=14
-2x8=16
-2x9=18
-3x2=0
-3x3=9
-3x4=12
-3x5=15
-```
-
-2025-06-18
-
-Johnny Cubides
+En la vida real, este dispositivo puede ser una herramienta económica, portátil y replicable para agricultores, comunidades rurales, plantas de tratamiento o investigadores que deseen evaluar la calidad del agua en tiempo real. Su uso puede prevenir enfermedades transmitidas por el agua, mejorar la seguridad alimentaria, y contribuir al uso más sostenible de los recursos hídricos.
+
+
+### Descripción general
+Este proyecto consiste en la medición de la turbidez de agua implementando un sensor de turbidez, una tarjeta de desarrollo ESP32 Wi-Fi, una FPGA y la transmisión de estos datos a un servidor vía Wi-Fi.
+
+---
+
+## Objetivo general
+Diseñar un sistema de medición de turbidez de agua que obtenga datos en tiempo real, utilizando un sensor de turbidez SEN 0189, un microcontrolador ESP32, y una FPGA para procesar y analizar los datos obtenidos. Este diseño se realizó para ser escalable en las mediciones generales del agua.
+
+## Objetivos específicos
+- Diseñar un sistema con los tres componentes antes mencionados para solicitar al sensor los datos en tiempo real de la turbidez del agua y enviarlos a un servidor vía Wi-Fi.  
+- Desarrollar un módulo en Verilog que implemente una máquina de estados finita para controlar la activación de una válvula según niveles de turbidez predefinidos.  
+- Implementar una interfaz UART funcional en la FPGA para recibir datos de turbidez enviados por la ESP32.  
+- Programar la ESP32 en MicroPython para leer valores del sensor de turbidez mediante su ADC y transmitirlos a la FPGA de forma serial.  
+- Realizar pruebas funcionales y simulaciones del sistema digital completo para verificar la lógica de control, temporización y comunicación entre dispositivos.  
+- Documentar detalladamente el diseño, desarrollo, pruebas y resultados del sistema, incluyendo diagramas, códigos fuente y procedimientos de carga/uso.  
+
+---
+
+## Descripción diagrama de caja negra
+En el siguiente diagrama se muestran 4 componentes principales: un sensor de turbidez del agua, una tarjeta de desarrollo ESP32 Wi-Fi, una FPGA y un servidor receptor de datos.  
+
+<p align="center">
+  <img src="./diagrama_caja_negra.png" alt="Diagrama de caja negras" width="6000"/>
+</p>
+
+Todo inicia en la FPGA enviando una señal al ESP32; este le envía la instrucción de realizar la medición de turbidez al sensor, el ESP32 recibe el dato y lo envía a la FPGA. La FPGA convierte el dato para su lectura, análisis e interpretación, y posteriormente envía el resultado del análisis al ESP32, que finalmente transmite los datos vía Wi-Fi al servidor.
+
+---
+
+## Requerimientos Funcionales
+- Lectura del nivel de turbidez mediante un sensor conectado a la ESP32.  
+- Conversión del valor analógico del sensor a un valor digital entre 0 y 15, donde 0 representa agua clara (válvula cerrada) y 15 agua muy turbia (válvula totalmente abierta).  
+- Envío del dato procesado desde la ESP32 a la FPGA utilizando comunicación UART.  
+- Procesamiento del valor de turbidez en la FPGA para determinar el estado de apertura de la válvula.  
+- Activación de una señal de control desde la FPGA que activa o desactiva la válvula según el nivel de turbidez.  
+- Visualización del estado actual del sistema (valor de turbidez y estado de la válvula) mediante displays de 7 segmentos.  
+
+## Requerimientos No Funcionales
+- El sistema debe responder a los cambios en turbidez en un tiempo menor a 1 segundo.  
+- El sistema debe ser confiable y funcionar de forma continua sin errores de comunicación ni fallas en la lógica.  
+- El código debe estar documentado de forma clara para facilitar su comprensión y mantenimiento por parte de diferentes integrantes del equipo.  
+- El diseño debe poder simularse digitalmente usando herramientas como Icarus Verilog y GTKWave para verificar su funcionamiento antes de ser cargado al hardware.  
+- La implementación debe ser modular, permitiendo modificar o sustituir partes del sistema sin necesidad de reescribir todo el código.  
+
+---
+
+## Descripción diagrama de bloques
+
+<p align="center">
+  <img src="./diagrama_de_bloques.jpg" alt="Diagrama de bloques" width="6000"/>
+</p>
+---
+
+## Descripción de los Módulos del Sistema y sus Conexiones
+
+### Sensor de Turbidez – SEN0189
+**Función:** Detecta la cantidad de partículas suspendidas en el agua, permitiendo medir su turbidez a través de una señal analógica.  
+
+**Conexiones:**  
+- `SEN0189_output → esp32_digital_pin_34`: Salida analógica del sensor que representa el nivel de turbidez.  
+- `SEN0189_4.5V+ → Fuente de alimentación de 4.5V`: Alimentación del sensor.  
+- `SEN0189_GND → esp32_GND`: Tierra común con el sistema.  
+
+### ESP32 (Microcontrolador con Wi-Fi)
+**Función:** Adquiere los datos del sensor SEN0189, actúa como convertidor ADC, envía los datos a la FPGA para procesamiento, y finalmente transmite la información procesada a través de Wi-Fi hacia un broker MQTT.  
+
+**Conexiones:**  
+- `esp32_digital_pin_34 ← SEN0189_output`: Entrada analógica para la señal de turbidez.  
+- `esp32_tx_pin_17 → fpga_pin_D4`: Transmisión de datos hacia la FPGA mediante UART.  
+- `esp32_rx_pin_16 ← fpga_pin_C4`: Recepción de datos procesados desde la FPGA.  
+- `esp32_module_IEEE 802.11 → PC (Wi-Fi)`: Envío inalámbrico de datos usando el protocolo MQTT.  
+- `esp32_GND → FPGA GND y SEN0189_GND`: Tierra común para todos los dispositivos conectados.  
+
+### FPGA COLORLIGHT
+**Función:** Procesa los datos digitales enviados por el ESP32. Además, genera la señal de control que indica cuándo se debe realizar la lectura del sensor.  
+
+**Conexiones:**  
+- `fpga_pin_D4 ← esp32_tx_pin_17`: UART Receiver (recibe los datos del ESP32).  
+- `fpga_pin_C4 → esp32_rx_pin_16`: UART Transmitter (devuelve los datos al ESP32).  
+- `fpga_jtag ↔ bridge_jtag_bitbang`: Interfaz de programación a través del puente JTAG.  
+- `fpga_GND → esp32_GND y bridge_GND`: Tierra compartida con el resto del sistema.  
+
+### BRIDGE (Interfaz USB–JTAG)
+**Función:** Permite la programación de la FPGA desde el PC mediante la interfaz JTAG, utilizando una conexión USB.  
+
+**Conexiones:**  
+- `bridge_USB ↔ PC (USB)`: Canal de comunicación para cargar configuraciones desde el PC.  
+- `bridge_jtag_bitbang ↔ fpga_jtag`: Interfaz de programación JTAG.  
+- `bridge_GND → fpga_GND`: Conexión de tierra compartida.  
+
+### PC (Servidor o Cliente MQTT)
+**Función:** Recibe los datos de turbidez transmitidos por el ESP32 a través de Wi-Fi usando el protocolo MQTT. También se encarga de la energización de la FPGA a través del BRIDGE.  
+
+**Conexiones:**  
+- `pc_USB0 ↔ bridge_USB`: Conexión física para la programación del FPGA.  
+- `pc_broker_MQTT`: Cliente o servidor MQTT encargado de recibir y gestionar los datos enviados por el ESP32.  
+
+---
+
+## Diagrama de flujo ESP32
+
+
+<p align="center">
+  <img src="./Diagrama_de_flujo_ESP32.jpg" alt="Diagrama de flujo ESP32" width="6000"/>
+</p>
+
+## Explicación del Diagrama de Flujo del ESP32
+
+Este diagrama representa el funcionamiento lógico del microcontrolador ESP32 dentro del sistema de riego automatizado. A continuación se detalla cada etapa:
+
+1. El proceso inicia con la activación del ESP32.
+2. Se ejecutan las funciones de inicialización `init enable()` y `start()`, las cuales configuran los periféricos y recursos necesarios del sistema.
+3. Se habilita el pin de control mediante la instrucción `init enable Pin`.
+4. A continuación, el sistema evalúa si se ha recibido un dato por el puerto serie RX:
+   - Si no se ha recibido ningún dato, el sistema vuelve a verificar esta condición de forma continua.
+   - Si se recibe un dato en RX, este dato es enviado a un broker MQTT mediante la conexión de red del ESP32.
+5. Luego, se evalúa el estado del pin digital 35:
+   - Si el pin está inactivo, el sistema vuelve a verificar su estado periódicamente.
+   - Si el pin digital 35 está activo, se inicia el proceso de lectura analógica (ADC).
+   - Una vez obtenida la lectura del ADC, el valor digitalizado es transmitido por el puerto TX.
+
+Este flujo garantiza la supervisión continua de los datos recibidos y de las señales digitales que activan la conversión analógica para el monitoreo de parámetros como la turbidez del agua.
+
+
+La ESP32 se encarga de recibir instrucciones de la FPGA, realizar lecturas del sensor de turbidez a través de su ADC, y enviar datos por UART o por Wi-Fi hacia un broker MQTT.
+
+---
+
+## Diagramas RTL del Proyecto
+
+El sistema implementado fue sintetizado y verificado en niveles jerárquicos. A continuación se presentan los diagramas RTL (Register Transfer Level) de los principales módulos del diseño implementado en la FPGA.
+
+
+### 1. RTL del SoC completo - `RTL_SoC.jpg`
+
+Este diagrama representa el sistema completo integrado sobre la FPGA. El diseño es un SoC (System-on-Chip) que combina un procesador RISC-V (FemtoRV32) con múltiples periféricos personalizados conectados a un bus interno. Entre los periféricos se encuentra el controlador de riego, encargado de actuar según los niveles de turbidez del agua.
+
+<p align="center">
+  <img src="./RTL_SoC.jpg" alt="RTL SoC" width="6000"/>
+</p>
+
+
+Componentes principales:
+
+- Módulo principal: femtorv32 SoC, que contiene:
+  - CPU FemtoRV32: procesador ligero RISC-V que ejecuta el código cargado en memoria.
+  - Memoria de instrucciones y datos: accedida directamente por el procesador.
+  - Módulo de interconexión con periféricos: se observa lógica de multiplexado y chip select.
+- Periféricos conectados:
+  - peripheral_uart: controlador de comunicación serie UART.
+  - periph_led_pwm: periférico que genera señales PWM.
+  - periph_controladorriego: módulo de control de riego según turbidez.
+- Señales de interconexión comunes: reloj (clk), reset, señales de dirección, lectura (rd) y escritura (wr).
+
+Este diagrama permite visualizar cómo se integran todos los módulos funcionales en el sistema y cómo se conectan al procesador principal, permitiendo su control por software.
+
+---
+
+### 2. RTL del módulo controlador de riego - `RTL_controlador_riego.jpg`
+
+Este RTL muestra la vista estructural del periférico encargado de la lógica de decisión sobre el riego, basado en los niveles de turbidez del agua.
+<p align="center">
+  <img src="./RTL_controlador_riego.jpg" alt="RTL controlador riego" width="6000"/>
+</p>
+
+Entradas principales:
+
+- clk: señal de reloj para sincronización.
+- reset: señal de reinicio del módulo.
+- turbidez: señal de entrada digitalizada que representa el nivel de turbidez del agua, recibida desde el ADC.
+- ready_from_esp: señal que indica si el módulo ESP32 está listo para recibir comandos.
+
+Salidas:
+
+- enable_esp: señal que se activa cuando se detecta alta turbidez y se desea activar el sistema de comunicación con el ESP32.
+- led_valvula: señal de control que enciende o apaga un LED o una electroválvula que representa el estado del sistema de riego.
+
+La lógica del módulo se basa en comparar el valor de turbidez contra un umbral predefinido. Si el nivel de turbidez es alto, se activa la señal de riego. Adicionalmente, la señal enable_esp permite al sistema comunicarse con el microcontrolador ESP32 para registrar o reportar eventos.
+
+---
+
+### 3. RTL de la lógica interna del controlador de riego - `RTL_controlador_riego_interno.jpg`
+
+Este diagrama corresponde al nivel más bajo de descripción estructural del módulo controlador de riego, mostrando el detalle de la lógica digital implementada.
+
+<p align="center">
+  <img src="./RTL_controlador_riego_interno.jpg" alt="RTL_controlador riego interno" width="6000"/>
+</p>
+
+Componentes destacados:
+
+- Comparadores lógicos: utilizados para comparar el valor de turbidez con umbrales fijos. Se observan comparaciones del tipo A > B, A == B, etc.
+- Multiplexores (MUX): utilizados para seleccionar entre diferentes señales de entrada según las condiciones de control del sistema.
+- Lógica combinacional: conformada por compuertas lógicas y redes de comparadores que permiten la toma de decisiones.
+- Lógica secuencial: basada en registros y flip-flops que almacenan estados de control como ‘enable_esp’ o ‘led_valvula’ de un ciclo a otro.
+- Constantes codificadas: valores como 0x00, 0xC, 0xEEB2B0, que son usados como referencias para comparación o para generar señales de control.
+- Señales internas: incluyen señales temporales y de control intermedio generadas por FSMs (máquinas de estados finitos) o lógica combinacional.
+
+Este diagrama es útil para validar que los componentes de control y decisión dentro del módulo están correctamente conectados y sincronizados con el sistema de reloj principal. También permite observar cómo el sistema responde de forma determinística a los datos de turbidez digitalizados.
+
+---
+
+---
+
+## Adaptación de voltaje para el ADC del ESP32
+
+La salida analógica del sensor (cable azul en la imagen) entrega una señal en el rango de 0 V a 4.5 V. Sin embargo, la entrada del ADC del ESP32 admite un máximo de 3.3 V, por lo cual conectar esta señal directamente podría dañar el microcontrolador o producir lecturas erróneas.
+
+Para resolver este problema, se implementó un divisor resistivo compuesto por:
+
+- Resistencia R1 = 100 kΩ conectada entre la salida del sensor y la entrada del ESP32.
+- Resistencia R2 = 50 kΩ conectada entre la entrada del ESP32 y GND.
+
+Este divisor reduce la tensión utilizando la siguiente ecuación:
+
+![Ecuación divisor de tensión](./ecuacion_divisor_tension_ADC.png)
+
+
+Con esto se asegura que el voltaje que llega al ESP32 no supere los 3.3 V, manteniendo así la integridad del sistema.
+
+Este tipo de adaptación es crucial cuando se conectan sensores con salida superior a 3.3 V a microcontroladores modernos, que no toleran niveles TTL de 5 V.
+
+Imagen del montaje del divisor de voltaje:
+
+![RTL SoC](imagen_ADC.jpg) 
