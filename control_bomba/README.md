@@ -72,13 +72,14 @@ La arquitectura implementa una solución SoC híbrida, donde la **FPGA realiza l
 ***Módulos Verilog**
 | Archivo               | Función                                                                 |
 |-----------------------|-------------------------------------------------------------------------|
-| `SOC.v`               |  Módulo principal del SoC, conecta CPU, memoria y periféricos.          |
-| `top_tb.v`            |  Testbenches para simular comportamiento                                |
-| `address_decoder.v`   |  Decodifica direcciones para acceso a memoria y periféricos.            |
-| `bench_quark.v`       |  Banco de pruebas para la CPU (núcleo tipo Quark).                      |
-| `chip_select.v`       |  Controla la habilitación de módulos según la dirección.                |  
-| `uart_tx.v`           |  Envía datos de estado por UART a microcontrolador o dispotivo.         | 
-|   mult.v	            |  Módulo principal del multiplicador.                                    |
+| `SOC.v`               | Módulo principal del SoC, conecta CPU, memoria y periféricos.           |
+| `top_tb.v`            | Testbenches para simular comportamiento.                                |
+| `address_decoder.v`   | Decodifica direcciones para acceso a memoria y periféricos.             |
+| `bench_quark.v`       | Banco de pruebas para la CPU (núcleo tipo Quark).                       |
+| `chip_select.v`       | Controla la habilitación de módulos según la dirección.                 |  
+| `uart_tx.v`           | Envía datos de estado por UART a microcontrolador o dispositivo.        | 
+| `mult.v`              | Módulo principal del multiplicador.                                     |
+| `hc_sr04.v`           | Controlador del sensor ultrasónico HC-SR04 para medición de distancia.  |
 
 ##
 ##
