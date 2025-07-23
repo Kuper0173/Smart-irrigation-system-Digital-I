@@ -3,7 +3,10 @@ module SOC (
     input             resetn,  // reset button
     output wire [0:0] LEDS,    // system LEDs
     input             RXD,     // UART receive
-    output            TXD      // UART transmit
+    output            TXD,      // UART transmit
+    output            TRIGGER,  // trigger sensor
+    input             ECHO, // echo sensor
+    output            ACTIVAR
 );
 
   //##########################
@@ -115,9 +118,8 @@ perip_hc_sr04 perip_hc_sr04 (
       .wr(wr),
       .d_out(hc_sr04_dout),
       .echo(ECHO),
-      .trigger(TRIGGER)
-      
-      
+      .trigger(TRIGGER),
+      .activar_bomba(ACTIVAR)
   );
 
   //######################################

@@ -21,7 +21,7 @@ DESIGN+= cores/dpRAM/perip_dpram.v
 DESIGN+= cores/hc_sr04/hc_sr04.v
 DESIGN+= cores/hc_sr04/perip_hc_sr04.v
 DIR_BUILD=build
-PORT=/dev/ttyUSB0
+PORT=/dev/ttyACM0
 DEVSERIAL=/dev/ttyACM0
 BAUD=57600
 # Z: Nombre para empaquetar proyecto
@@ -133,7 +133,7 @@ clean-syn:
 	$(RM) -rf $(DIR_BUILD)
 	# $(RM) -f $(JSON) $(ASC) $(BISTREAM)
 
-.PHONY: clean
+.PHONY: clean config
 # .PHONY: upload clean $(top).json $(top).bin $(top).asc init_dir_build
 ###############################
 ###--- Rules from sim.mk ---###

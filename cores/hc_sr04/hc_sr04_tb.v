@@ -1,51 +1,126 @@
 `timescale 1ns / 1ps
 
-module tb_hc_sr04;
+module hc_sr04_tb();
 
+    // Parámetros para 25MHz
+    parameter CLK_PERIOD = 40;  // 40ns = 25MHz
+    parameter TICKS_PER_CM = 58;
+    parameter TRIGGER_DURATION = 375; // 15us en ticks a 25MHz
+
+    // Señales
     reg clk;
-    reg rst;
+    reg rst_n;
     reg echo;
+    reg [15:0] umbral;
     wire trigger;
     wire [15:0] distance;
+    wire activar;
 
-    hc_sr04 uut (
+    // Instancia del módulo bajo prueba
+    hc_sr04 dut (
         .clk(clk),
-        .rst(rst),
+        .rst(~rst_n),
         .echo(echo),
+        .umbral(umbral),
         .trigger(trigger),
-        .distance(distance)
+        .distance(distance),
+        .activar(activar)
     );
 
-    // Clock de 25MHz => Periodo = 40ns
-    always #20 clk = ~clk;
-
+    // Generación de reloj
     initial begin
-        // Configuración del archivo de onda
-        $dumpfile("hc_sr04.vcd");
-        $dumpvars(0, tb_hc_sr04);  // Grabar todas las señales del testbench
+        clk = 0;
+        forever #(CLK_PERIOD/2) clk = ~clk;
+    end
+
+    // Tarea para generar eco
+    task gen_echo;
+        input real distance_cm;
+        integer duration;
+        begin
+            duration = distance_cm * TICKS_PER_CM;
+            echo = 1'b1;
+            #(duration);
+            echo = 1'b0;
+        end
+    endtask
+
+    // Secuencia de prueba principal
+    initial begin
+        // Configuración del dumpfile
+        $dumpfile("hc_sr04_tb.vcd");
+        $dumpvars(0, hc_sr04_tb);
         
         // Inicialización
-        clk = 0;
-        rst = 1;
-        echo = 0;
+        rst_n = 1'b0;
+        echo = 1'b0;
+        umbral = 16'd5800; // 100cm
+        
+        // Reset
         #100;
-
-        rst = 0;
-
-        // Esperamos que el módulo emita un pulso de trigger
-        #17000;
-
-        // Simulamos señal echo en alto por 1 ms (25000 ciclos a 25MHz)
-        echo = 1;
-        #1000000; // 1 ms
-
-        echo = 0;
-
-        // Esperamos un poco
-        #5000;
-
-        $display("Distancia medida: %d", distance);
+        rst_n = 1'b1;
+        #100;
+        
+        // Test 1: Distancia bajo umbral
+        $display("[TEST 1] Distancia 50cm (<100cm umbral)");
+        wait(trigger == 1'b1);
+        #100000;
+        gen_echo(50.0);
+        #10000;
+        
+        if (activar !== 1'b0) begin
+            $display("ERROR: TEST 1 Falló - activar debería ser 0");
+            $finish;
+        end
+        else begin
+            $display("TEST 1 Pasó");
+        end
+        
+        // Test 2: Distancia sobre umbral
+        $display("[TEST 2] Distancia 150cm (>100cm umbral)");
+        wait(trigger == 1'b1);
+        #500;
+        gen_echo(150.0);
+        #500;
+        
+        if (activar !== 1'b1) begin
+            $display("ERROR: TEST 2 Falló - activar debería ser 1");
+            $finish;
+        end
+        else begin
+            $display("TEST 2 Pasó");
+        end
+        
+        // Test 3: Cambio de umbral
+        $display("[TEST 3] Cambio de umbral a 50cm");
+        umbral = 16'd2900; // 50cm
+        #100;
+        
+        wait(trigger == 1'b1);
+        #1000;
+        gen_echo(60.0);
+        #10000;
+        
+        if (activar !== 1'b1) begin
+            $display("ERROR: TEST 3 Falló - activar debería ser 1");
+            $finish;
+        end
+        else begin
+            $display("TEST 3 Pasó");
+        end
+        
+        // Finalización
+        #1000;
+        $display("Simulación completada exitosamente");
         $finish;
     end
-    
+
+    // Monitor de eventos
+    always @(posedge trigger) begin
+        $display("Trigger detectado en %t ns", $time);
+    end
+
+    always @(activar) begin
+        $display("Estado activar cambiado a %b en %t ns", activar, $time);
+    end
 endmodule

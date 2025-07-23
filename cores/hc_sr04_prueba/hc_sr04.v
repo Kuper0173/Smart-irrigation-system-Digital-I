@@ -2,10 +2,8 @@ module hc_sr04 (
     input clk,               // 25 MHz clock
     input rst,               // Reset
     input echo,              // Echo input
-    input [15:0] umbral,     // Distancia umbral en ticks
     output reg trigger,      // Trigger output
-    output reg [15:0] distance, // Distancia medida en ticks
-    output reg activar       // Salida de control (1: activar bomba/rele)
+    output reg [15:0] distance // Resultado en "ticks"
 );
 
     reg [15:0] con_out = 0;
@@ -24,7 +22,6 @@ module hc_sr04 (
             con_out <= 0;
             con_in <= 0;
             distance <= 0;
-            activar <= 0;
         end else begin
             case (state)
                 IDLE: begin
@@ -52,8 +49,6 @@ module hc_sr04 (
                         con_in <= con_in + 1;
                     end else begin
                         distance <= con_in;
-                        // Lógica de comparación con umbral
-                        activar <= (con_in < umbral); // Activar si distancia > umbral
                         state <= IDLE;
                     end
                 end
@@ -61,3 +56,4 @@ module hc_sr04 (
         end
     end
 endmodule
+

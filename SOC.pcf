@@ -12,6 +12,11 @@ set_io TXD 135 # TX
 set_io RXD 134 # RX
 
 
+## HC_SR04
+set_io ECHO 34 # echo
+set_io TRIGGER 38 # trigger
+set_io ACTIVAR 33 # activacion bomba
+
 # Opciones de configuración para port--pin
 # set_io [-nowarn] [-pullup yes|no] [-pullup_resistor 3P3K|6P8K|10K|100K] port pin
 
