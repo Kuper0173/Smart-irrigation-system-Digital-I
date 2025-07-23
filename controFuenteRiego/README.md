@@ -9,6 +9,8 @@ Este proyecto implementa un sistema embebido sobre FPGA, el cual recibe parametr
 Mediante protocolos de comunicacion por MQTT se reciben los parametros de humedad de la tierra, funcionalidad de la bomba de agua, cantidad de agua y la temperatura ambiente. A su vez se incluye un interruptor de encendido/apagado.
 La salida esta en funcion de la temperatura del ambiente la cual entre mayor sea da mayor tiempo de irrigacion de la plantacion.
 
+Esta salida excita un relevador el cual actua como interruptor y abre el paso a la apertura de la valvula.
+
 ---
 
 ##  Diagrama ASM / Máquina de Estados / Diagrama de Flujo
@@ -23,8 +25,7 @@ La salida esta en funcion de la temperatura del ambiente la cual entre mayor sea
 
 <img width="1220" height="636" alt="Captura de pantalla de 2025-07-23 04-58-15" src="https://github.com/user-attachments/assets/e055b7b1-6c8a-44be-a8ad-acc20449a036" />
 
-`[Espacio para gráfica RTL principal]`  
-`[Espacio para gráfica RTL del módulo]`
+El montaje y la simuulacion fueron hechas con Digital.
 
 ---
 
