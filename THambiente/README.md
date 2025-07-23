@@ -2,7 +2,7 @@
 
 ## Introducción
 
-Este proyecto tiene como objetivo la implementación de un sistema para la medición de temperatura ambiental utilizando la FPGA **BlackIceMX** de **Mystorm**. El sistema interactúa con el sensor **DHT11** para leer la temperatura, procesa los datos a través de un diseño realizado en **Verilog** y los muestra en dos displays de siete segmentos. Además, se implementa un sistema de alerta que envía una notificación a través de un **ESP32** cuando la temperatura alcanza un valor predefinido (27°C).
+Este proyecto tiene como objetivo la implementación de un sistema para la medición de temperatura ambiental utilizando la FPGA **BlackIceMX** de **Mystorm**. El sistema interactúa con el sensor **DHT11** para leer la temperatura, procesa los datos a través de un diseño realizado en **Verilog** y los muestra en dos displays de siete segmentos. Además, se implementa un sistema de alerta que se activa manualmente a través de un **ESP32**.
 
 Este tipo de sistemas embebidos es fundamental en aplicaciones de **Internet de las Cosas (IoT)**, donde es necesario medir, controlar y monitorear condiciones físicas de forma remota, lo cual tiene aplicaciones en áreas como la automatización del hogar y la industria.
 
@@ -20,7 +20,7 @@ El objetivo principal de este proyecto es diseñar y desarrollar un sistema basa
 
 - Leer la temperatura ambiental a través del **sensor DHT11**.
 - Mostrar la temperatura en dos displays de siete segmentos.
-- Enviar una alerta a través de un módulo **ESP32** cuando se desee de forma manual.
+- Activar una alerta manualmente a través de un módulo **ESP32**.
 
 Este sistema tiene como finalidad integrar los conocimientos adquiridos en la materia Digital 1 y aplicar conceptos de diseño en Verilog, programación en FPGA y control de periféricos como el sensor DHT11 y los displays de 7 segmentos.
 
