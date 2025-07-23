@@ -106,7 +106,15 @@ El **ESP32** se utiliza para enviar una alerta cuando se desee de forma manual. 
 
 ## Diagrama de Conexión
 
-A continuación, se muestra el diagrama de conexiones entre los componentes principales:
+![Diagrama de Conexión](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Mapa%20de%20conexiones_fritzig.jpg.png)
+
+En este modelo, se muestra el diagrama de conexiones en la plataforma **Fritzing**. Las conexiones entre los displays de 7 segmentos y la FPGA se realizan mediante un mapeo directo de pines: **A-A, B-B, C-C**, y así sucesivamente. Para proteger los displays de posibles sobrecargas, estas conexiones se realizan a través de **resistencias de 220 ohmios**, lo que ayuda a evitar daños por corriente excesiva.
+
+En el diagrama, los cables morados representan los **jumpers** que conectan la FPGA con los displays. También se observa el **sensor de temperatura DHT11**, conectado a las líneas de **tierra** (GND) de la protoboard, así como al voltaje y la tierra de la FPGA.
+
+Las conexiones en Fritzing representan las salidas de la FPGA, las cuales están mapeadas al hardware real de la **BlackIceMX de Mystorm**. De esta forma, el diagrama simula cómo se conectarían los componentes en el entorno físico.
+
+A continuación, se muestra la conexión real del circuito a la fpga:
 
 ![Diagrama de Conexión](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Mapa%20de%20conexiones.jpg)
 
@@ -127,6 +135,30 @@ El siguiente diagrama de flujo describe el comportamiento general del sistema:
 3. **Visualización en Displays**: Los valores de temperatura (decenas y unidades) son mostrados en los displays de 7 segmentos mediante multiplexado.
 4. **Comprobación del Umbral de Temperatura**: Si la temperatura supera el umbral, el sistema activa el **ESP32**.
 5. **Envío de Alerta**: El **ESP32** envía una alerta a través de WiFi a un servidor o aplicación.
+
+## Arquitectura del Sistema
+
+La figura muestra la interacción entre los módulos lógicos y los dispositivos físicos que componen el proyecto:
+
+| Bloque | Función principal | Flujos de datos relevantes |
+|--------|------------------|----------------------------|
+| **PC** | Punto de control para pruebas y depuración. Desde un terminal se envían comandos o se reciben lecturas de temperatura. | • Conexión USB (picom) → **FTDI FT123RL** |
+| **FTDI FT123RL** | Puente USB-UART que convierte los datos provenientes del PC al nivel lógico que entiende la FPGA. | • Líneas RX/TX ↔ **CPU** (FPGA) |
+| **Sensor DHT11** | Fuente de la temperatura real. Envía los datos digitales a la FPGA. | • Línea de datos → **CPU** |
+| **FPGA (BlackIceMX)** | Núcleo del sistema. Contiene:<br>  • **CPU FemtoRV32** (ejecuta el firmware).<br>  • **Memoria** de programa/datos.<br>  • **Selector de chip** (decodifica direcciones y habilita periféricos).<br>  • **Periférico de multiplexado** (control de displays).<br>  • **UART** (enlace con ESP32). | • CPU ↔ Memoria y periféricos.<br>• CPU ↔ UART (TX/RX) |
+| **Displays de 7 segmentos** | Muestran la temperatura (decenas y unidades) controlados por el periférico de multiplexado. | • Señales de segmento/ánodo ← Periférico (FPGA) |
+| **ESP32** | Nodo IoT. Recibe la temperatura vía UART y la publica por Wi-Fi/MQTT cuando el usuario la solicita. | • UART RX/TX ↔ FPGA.<br>• Wi-Fi/MQTT ↔ red externa |
+
+### Secuencia de operación (resumen)
+
+1. El **PC** envía comandos o lee resultados por USB; el **FTDI** traduce USB ↔ UART.  
+2. La **CPU** de la FPGA lee la temperatura del **DHT11**, la almacena en memoria y la distribuye:  
+   - Al periférico de los **displays** para visualizarla localmente.  
+   - Por UART al **ESP32** cuando el usuario lo indica.  
+3. El **ESP32** publica la lectura por Wi-Fi/MQTT, cerrando el flujo “sensor → visualización local → publicación remota”.
+
+Con esta arquitectura se separan claramente la adquisición de datos (DHT11 → FPGA), la presentación local (displays) y la distribución inalámbrica (ESP32), manteniendo al **PC** como herramienta de depuración y control.
+
 
 ## Resultados Esperados
 
