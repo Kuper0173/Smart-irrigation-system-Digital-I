@@ -508,18 +508,17 @@ Indica la cantidad total de celdas lógicas utilizadas. Estas celdas son primiti
 
 ```mermaid
 flowchart TD
-    Start[Inicio del analisis de sintesis] --> Read[Lectura del diseno HDL]
-    Read --> Netlist[Generacion de netlist]
-    Netlist --> Wires[Asignacion de wires]
-    Wires --> HasMem{Hay memoria?}
-    HasMem -- No --> NoMem[Memorias utilizadas: 0]
-    HasMem -- Si --> YesMem[Contar memoria y procesos]
-    NoMem --> Public[Contar bits y wires publicos]
-    YesMem --> Public
-    Public --> Cells[Calcular total de celdas utilizadas]
-    Cells --> Report[Generar informe de recursos]
-    Report --> End[Fin del analisis]
-
+    A[Inicio del análisis de síntesis] --> B[Lectura del diseño HDL]
+    B --> C[Generación de netlist]
+    C --> D[Asignación de wires]
+    D --> E{¿Hay memoria?}
+    E -- No --> F[Memorias utilizadas: 0]
+    E -- Sí --> G[Contar memoria y procesos]
+    F --> H[Contar bits y wires públicos]
+    G --> H
+    H --> I[Calcular total de celdas utilizadas]
+    I --> J[Generar informe de recursos]
+    J --> K[Fin del análisis]
 
 
 
