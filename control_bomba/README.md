@@ -454,6 +454,108 @@ Video simulacion:
 Logs de make log-prn, make log-syn diagramas de flujo 
 Logs de make log-pnr, make log-syn, donde se identifique los warnings y los recursos usados en el flujo de síntesis.
 
+## 📊 Estadísticas del SoC sintetizado
+
+| Recurso                | Cantidad |
+|------------------------|----------|
+| **Total de wires**     | 786      |
+| Bits en wires          | 4270     |
+| Wires públicos         | 786      |
+| Bits en wires públicos | 4270     |
+| Memorias               | 0        |
+| Bits de memoria        | 0        |
+| Procesos               | 0        |
+| **Celdas utilizadas**  | 1928     |
+
+**Number of wires** : 786
+
+Se refiere a la cantidad total de señales lógicas (también llamadas "wires") que interconectan los distintos bloques o módulos del sistema. Estas señales permiten la transmisión de información entre las distintas partes del SoC.
+
+**Number of wire bits** : 4270
+
+Cada wire puede tener uno o más bits (por ejemplo, buses de datos de 16 o 32 bits). Esta cifra indica la cantidad total de bits individuales que componen todas las señales del sistema.
+
+**Number of public wires** : 786
+
+Corresponde al número de señales que están declaradas como públicas, es decir, accesibles desde el exterior del módulo principal. Generalmente, incluyen entradas, salidas o interfaces de comunicación.
+
+**Number of public wire bits** : 4270
+
+Representa la cantidad total de bits dentro de las señales públicas. Es útil para estimar cuánta información puede intercambiar el sistema con el exterior.
+
+**Number of memories** : 0
+
+Este valor indica que no se utilizaron bloques de memoria (como RAM o ROM internos) en el diseño. Todo el almacenamiento o procesamiento se realiza mediante registros o lógica combinacional.
+
+**Number of memory bits** : 0
+
+Al no haber bloques de memoria declarados, tampoco se utilizan bits de memoria para almacenamiento interno.
+
+**Number of processe** : 0
+
+Significa que el diseño no contiene bloques secuenciales de alto nivel (always, initial, etc.), por lo que se deduce que es una implementación completamente estructural, usando módulos y conexiones explícitas.
+
+**Number of cells** : 1928
+
+Indica la cantidad total de celdas lógicas utilizadas. Estas celdas son primitivas básicas de la FPGA (como flip-flops, LUTs, registros, etc.) que implementan el comportamiento funcional del sistema.
+
+
+
+### 🧱 Tipos de celdas utilizadas
+
+| Tipo de celda    | Cantidad |
+|------------------|----------|
+| `SB_CARRY`       | 266      |
+| `SB_DFF`         | 35       |
+| `SB_DFFE`        | 136      |
+| `SB_DFFER`       | 85       |
+| `SB_DFFESR`      | 126      |
+| `SB_DFFESS`      | 1        |
+| `SB_DFFR`        | 3        |
+| `SB_DFFSR`       | 18       |
+| `SB_DFFSS`       | 4        |
+| `SB_LUT4`        | 1234     |
+| `SB_RAM40_4K`    | 20       |
+
+
+**SB_CARRY** : 266
+
+Celdas dedicadas a operaciones aritméticas, especialmente a la propagación de acarreo en sumadores. Son fundamentales en operaciones como conteo, suma y comparación.
+
+**SB_DFF** : 35
+
+Flip-flops tipo D básicos, usados para almacenar bits individuales en circuitos secuenciales. Se activan en el flanco de reloj y almacenan el valor de entrada D.
+
+**SB_DFFE** : 136
+
+Flip-flops tipo D con habilitación (enable). Solo almacenan datos cuando la señal de habilitación está activa, permitiendo ahorrar recursos y evitar cambios innecesarios.
+
+**SB_DFFER**: 85
+
+Variante del flip-flop D con habilitación y señal de reinicio (reset). Permite inicializar o limpiar el contenido del flip-flop cuando se necesita.
+
+**SB_DFFESR** : 126
+
+Flip-flop más complejo que incluye habilitación, señal de set y reset. Ideal para controladores que requieren múltiples condiciones de control para establecer o reiniciar el estado.
+
+**SB_DFFESS** : 1
+
+Variante de flip-flop con señal de set y habilitación simultáneas. Muy específico para lógicas de control donde se debe forzar un 1 bajo condiciones controladas.
+
+**SB_DFFR** : 3
+
+Flip-flop tipo D con reset asíncrono. Este tipo permite reiniciar su valor independientemente del reloj, útil en situaciones donde se necesita una limpieza inmediata del sistema.
+
+**SB_DFFSR** : 18
+
+Flip-flops con set y reset asíncronos, que permiten forzar valores altos o bajos bajo condiciones específicas, sin depender del reloj del sistema.
+
+**SB_DFFSS** : 4
+
+Flip-flop con doble señal de set. Se emplean en sistemas con múltiples fuentes de activación forzada del estado alto (set).
+
+
+
 ##
 ¿Còmo interactùa con entornos externos?
 Explicación sobre el cómo interactúa con aplicaciones externas (mqtt, chuck) etc.
