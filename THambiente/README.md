@@ -161,6 +161,28 @@ La figura muestra la interacción entre los módulos lógicos y los dispositivos
 
 Con esta arquitectura se separan claramente la adquisición de datos (DHT11 → FPGA), la presentación local (displays) y la distribución inalámbrica (ESP32), manteniendo al **PC** como herramienta de depuración y control.
 
+## Simulación del Circuito en Digital
+
+Este es un diagrama de simulación realizado en **Digital**, un software utilizado para diseñar y simular circuitos digitales. El circuito mostrado en la imagen es un sistema de multiplexado y decodificación para un **display de 7 segmentos**.
+
+### Explicación del Circuito:
+
+1. **Demux 2x1**: Este componente se utiliza para dirigir las señales de entrada a dos salidas diferentes (Y0 y Y1) según el valor de la señal de selección (S). Esta es una forma de multiplicar las salidas y controlar las señales de manera eficiente para la visualización en los displays de 7 segmentos.
+
+2. **MUX 2x1**: El multiplexor selecciona una de las dos señales de entrada (W0, W1, W2, W3 y Z0, Z1, Z2, Z3) en función de la señal de selección S. Este proceso se usa para decidir qué dígitos se van a mostrar en los displays de 7 segmentos.
+
+3. **Decodificadores de 7 segmentos (DECO 1 y DECO 2)**: Estos decodificadores convierten las señales binarias de los multiplexores en señales de control para los segmentos de los displays de 7 segmentos. Cada salida de los decodificadores se conecta a los segmentos correspondientes del display, lo que permite representar números del 0 al 9.
+
+4. **Displays de 7 segmentos**: Los displays visualizan la temperatura, números o cualquier dato que se necesite mostrar. Cada display está controlado por un decodificador que convierte las señales binarias de los multiplexores en formato adecuado para ser visualizado.
+
+### Simulación:
+
+Este diagrama es parte de la simulación que se ejecuta en **Digital**, donde se pueden ver en tiempo real cómo las señales viajan a través de los componentes y cómo se muestran los números en los displays de 7 segmentos. A través de esta simulación, se puede verificar el comportamiento y la correcta implementación del sistema antes de llevarlo a la práctica.
+
+---
+
+**En este [link](https://www.youtube.com/watch?v=Dt64bOUN48Q)** encontrarán un video explicando en detalle la simulación de este circuito, donde se muestra cómo cada componente interactúa y cómo se visualizan los resultados en los displays de 7 segmentos.
+
 
 ## Resultados Esperados
 
