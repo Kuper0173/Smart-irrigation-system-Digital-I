@@ -28,7 +28,7 @@ Objetivos especificos
 ![Imagen de WhatsApp 2025-07-22 a las 15 52 48_a0a58ffc](https://github.com/user-attachments/assets/68a7a734-0f2f-46c8-b2be-548984ff0d7b)
 
 
-El monitoreo del nivel de agua es esencial para la automatización en riegos, acueductos, y control de fluidos en general. Este proyecto busca integrar tecnologías digitales con procesamiento distribuido para ofrecer una solución educativa y funcional para este tipo de monitoreo.
+El monitoreo del nivel de agua es esencial para la automatización. Este proyecto busca integrar tecnologías digitales con procesamiento distribuido para ofrecer una solución educativa y funcional para este tipo de monitoreo.
 
 La arquitectura implementa una solución SoC híbrida, donde la **FPGA realiza la temporización de señales críticas**, y el **ESP32 actúa como nodo de comunicación inteligente**, gestionando el envío de datos por red.
 ##
