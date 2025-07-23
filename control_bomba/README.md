@@ -391,6 +391,52 @@ Muestra la lógica de integración del módulo sensor como un periférico mapead
 ![Imagen de WhatsApp 2025-07-23 a las 21 18 47_183fe2c5](https://github.com/user-attachments/assets/b1fb859d-9633-42a4-9c88-7c2315bf4f86)
 
 
+Este diagrama representa el sistema de control completo implementado en una FPGA, encargado de leer y escribir datos a través de una interfaz de bus y controlar una bomba de agua en función de la distancia medida por el sensor ultrasónico HC-SR04.
+
+**Funcionalidad general**
+- El sistema conecta el módulo periférico HC-SR04 a un bus de datos de 32 bits a través de una interfaz direccionable que permite:
+- Escribir el umbral de activación.
+- Leer la distancia medida por el sensor.
+- Activar o desactivar la bomba según si la distancia es menor que el umbral.
+- Esto lo convierte en un periférico direccionable y configurable dentro de un sistema embebido más grande.
+
+**Interfaz de comunicación con el bus**
+
+- Entradas: addr, wr, rd, cs, d_in
+- Salidas: d_out
+- Esta interfaz permite al microcontrolador o procesador central comunicarse con el periférico usando direcciones específicas.
+Dirección 0x8: permite escribir el umbral para el sensor.
+Dirección 0x5A00: permite leer la distancia medida por el sensor.
+- Un comparador y lógica de control (wr, rd, cs, addr) habilitan la escritura o lectura según corresponda.
+
+**Registro de umbral**
+
+- El dato proveniente del bus (d_in[15:0]) se carga en el registro del umbral si se cumple la condición de escritura a la dirección 0x8.
+- Este umbral se envía directamente al módulo hc_sr04 para ser usado como valor de comparación.
+
+**Módulo hc_sr04**
+
+- Entradas: clk, rst, echo, umbral
+- Salidas: trigger, distance, activar
+- Este bloque encapsula la lógica que mide la distancia y genera la señal de activación si la distancia es menor al umbral (ver explicación del diagrama anterior).
+
+**Lectura del valor medido**
+
+- Cuando se activa la señal de lectura (rd) con la dirección 0x5A00, el valor de distance se selecciona mediante multiplexores y se envía a d_out[15:0].
+- Esto permite al procesador conocer el valor de distancia medido por el sensor.
+
+**Activación de bomba**
+
+- La señal activar del módulo hc_sr04 pasa por un multiplexor para convertirse en activar_bomba.
+- Esta salida puede usarse para controlar directamente una bomba de agua (o cualquier otro actuador) según el resultado de la comparación.
+  
+  **Flujo de datos**
+- El sistema recibe un valor de umbral desde el bus (por ejemplo, 100 cm).
+- El módulo hc_sr04 mide la distancia y la compara con el umbral.
+- Si la distancia es menor, se activa la señal activar_bomba.
+- El sistema también puede leer el valor actual de distancia desde el bus.
+
+
 
 ##
 Simulaciones:
