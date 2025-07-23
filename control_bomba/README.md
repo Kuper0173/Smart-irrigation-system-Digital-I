@@ -555,8 +555,20 @@ Flip-flops con set y reset asíncronos, que permiten forzar valores altos o bajo
 **SB_DFFSS** : 4
 
 Flip-flop con doble señal de set. Se emplean en sistemas con múltiples fuentes de activación forzada del estado alto (set).
+##
 
+**make log-pnr**
 
+###  Utilización de Recursos del Dispositivo
+
+| Recurso             | Uso        | Total Disponible | % Utilizado | Descripción                                                                 |
+|---------------------|------------|------------------|-------------|-----------------------------------------------------------------------------|
+| **ICESTORM_LC**     | 1389       | 7680             | 18%         | Celdas lógicas utilizadas para lógica combinacional y secuencial.          |
+| **ICESTORM_RAM**    | 20         | 32               | 62%         | Bloques de memoria RAM interna usados para almacenamiento de datos.        |
+| **SB_IO**           | 8          | 256              | 3%          | Pines de entrada/salida ocupados para comunicación con periféricos.        |
+| **SB_GB**           | 7          | 8                | 87%         | Buffers globales usados para distribuir señales de reloj o control.        |
+| **ICESTORM_PLL**    | 0          | 2                | 0%          | Módulos PLL usados para generación/modificación de relojes (no usados).    |
+| **SB_WARMBOOT**     | 0          | 1                | 0%          | Módulo para reinicio en caliente (warmboot), no utilizado en este diseño.  |
 
 ##
 ¿Còmo interactùa con entornos externos?
