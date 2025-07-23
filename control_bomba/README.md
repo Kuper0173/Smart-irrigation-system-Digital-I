@@ -5,7 +5,7 @@ En el presente repositorio se expondrá en que conssitió el proyecto realizado 
 
 - Juan David Gomez 
 - David Leonardo Botia
-- Yuliana
+- Yuliana Quiñones
   
 Bienvenidos a nuestro repositorio del proyecto final de nuestra clase de electrónica digital de la Universidad Nacional de Colombia del semestre 2025-I, el cual consistía en el diseño y posterior implementación de un Sensor para la medicion de agua, realizando una versión digital de este mismo mediante el uso de sensores ultrasónicos, FPGA y ESP32.
 ##
