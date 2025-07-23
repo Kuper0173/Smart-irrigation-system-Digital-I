@@ -454,7 +454,9 @@ Video simulacion:
 Logs de make log-prn, make log-syn diagramas de flujo 
 Logs de make log-pnr, make log-syn, donde se identifique los warnings y los recursos usados en el flujo de síntesis.
 
-## 📊 Estadísticas del SoC sintetizado
+**make log syn** 
+
+##  Estadísticas del SoC sintetizado
 
 | Recurso                | Cantidad |
 |------------------------|----------|
@@ -501,7 +503,7 @@ Indica la cantidad total de celdas lógicas utilizadas. Estas celdas son primiti
 
 
 
-### 🧱 Tipos de celdas utilizadas
+###  Tipos de celdas utilizadas
 
 | Tipo de celda    | Cantidad |
 |------------------|----------|
