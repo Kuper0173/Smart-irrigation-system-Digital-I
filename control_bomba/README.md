@@ -504,8 +504,7 @@ Indica la cantidad total de celdas lógicas utilizadas. Estas celdas son primiti
 
 ## 🔁 Diagrama de flujo
 
-<img width="828" height="3018" alt="deepseek_mermaid_20250723_487ee9" src="https://github.com/user-attachments/assets/74bf76f8-903b-4392-a602-e4bb38ea38ca" />
-
+<img width="817" height="3018" alt="deepseek_mermaid_20250723_73fb5a" src="https://github.com/user-attachments/assets/243a4c6a-f89b-499b-b34b-80ef2c4295ce" />
 
 
 
@@ -563,6 +562,12 @@ Indica la cantidad total de celdas lógicas utilizadas. Estas celdas son primiti
 - Flip-flop con doble señal de set. Se emplean en sistemas con múltiples fuentes de activación forzada del estado alto (set).
 ##
 
+
+**Diagrama de flujo**
+
+<img width="618" height="3954" alt="deepseek_mermaid_20250723_486089" src="https://github.com/user-attachments/assets/9b3b6fa1-e083-4030-8cac-fb60e418a5aa" />
+
+
 **make log-pnr**
 
 ###  Utilización de Recursos del Dispositivo
@@ -598,6 +603,11 @@ Se utilizaron 1389 celdas lógicas de las 7680 disponibles (18%). Estas celdas c
 
 **SB_WARMBOOT**
 - El módulo de reinicio en caliente (warmboot) no se utilizó (0/1). Este componente permite cambiar entre diferentes imágenes de configuración del FPGA sin necesidad de reiniciar físicamente el dispositivo, y puede ser útil para actualizaciones dinámicas del sistema.
+
+**Diagrama de flujo**
+
+<img width="828" height="2394" alt="deepseek_mermaid_20250723_265786" src="https://github.com/user-attachments/assets/c78a9a3d-a4c3-43e1-97a8-c604bca4bf80" />
+
 
 
 ##
