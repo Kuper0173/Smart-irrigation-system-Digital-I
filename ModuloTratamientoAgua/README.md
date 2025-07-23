@@ -49,7 +49,8 @@ Diseñar un sistema de medición de turbidez de agua que obtenga datos en tiempo
 | Archivo               | Función                                                                 |
 |-----------------------|-------------------------------------------------------------------------|
 | `SOC.v`               |  Módulo principal del SoC, conecta CPU, memoria y periféricos.          |
-| `uart_tx.v`           |  Envía datos de estado por UART a microcontrolador o dispotivo.                              |
+| `SOC_tb.v`            |  Banco de pruebas que simula el parpadeo de un LED usando el SoC completo en la placa Blackice. Configura reloj y pruebas vía UART.          |
+| `uart_tx.v`           |  Envía datos de estado por UART a microcontrolador o dispotivo.         |
 | `address_decoder.v`   |  Decodifica direcciones para acceso a memoria y periféricos.            |
 | `bench_quark.v`       |  Banco de pruebas para la CPU (núcleo tipo Quark).                      |
 | `chip_select.v`       |  Controla la habilitación de módulos según la dirección.                |  
