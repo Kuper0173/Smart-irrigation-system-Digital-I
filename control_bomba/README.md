@@ -348,7 +348,7 @@ Este muestra toda la estructura del sistema embebido (SoC): incluye el procesado
 - El periférico responde con datos en d_out, que se enrutan hacia mem_rdata para que el procesador los lea.
 
 
-**RLT DEL SENSOR**
+**RTL DEL SENSOR**
 
 Este muestra sólo la lógica del módulo HC-SR04: cómo se manejan las señales echo, trigger, distance, los contadores, registros y comparadores internos.
 
@@ -385,7 +385,7 @@ Este muestra sólo la lógica del módulo HC-SR04: cómo se manejan las señales
 - Varios bloques realizan selección de entradas y salidas según condiciones binarias (por ejemplo, selección entre 0x0 y 0x1).
 - El sistema se reinicia con la señal rst y opera sincronizado con el reloj clk.
 
-**RLT PERIP**
+**RTL PERIP**
 
 Muestra la lógica de integración del módulo sensor como un periférico mapeado a memoria, con señales de dirección, lectura/escritura, selección de chip, etc.
 
