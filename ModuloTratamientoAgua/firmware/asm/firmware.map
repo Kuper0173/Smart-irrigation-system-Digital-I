@@ -1,0 +1,46 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+BRAM             0x0000000000000000 0x0000000000004000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+
+everything      0x0000000000000000      0x162
+                0x0000000000000000                . = ALIGN (0x4)
+ example1.o(.text)
+ .text          0x0000000000000000       0x44 example1.o
+                0x0000000000000000                start
+ *(.*)
+ .data          0x0000000000000044       0x13 example1.o
+ .bss           0x0000000000000057        0x0 example1.o
+ .riscv.attributes
+                0x0000000000000057       0x1a example1.o
+ *fill*         0x0000000000000071        0x3 
+ .text          0x0000000000000074       0x24 wait.o
+                0x0000000000000074                wait
+ .data          0x0000000000000098        0x0 wait.o
+ .bss           0x0000000000000098        0x0 wait.o
+ .riscv.attributes
+                0x0000000000000098       0x1a wait.o
+ *fill*         0x00000000000000b2        0x2 
+ .text          0x00000000000000b4       0x44 putchar.o
+                0x00000000000000b4                putchar
+ .data          0x00000000000000f8        0x0 putchar.o
+ .bss           0x00000000000000f8        0x0 putchar.o
+ .riscv.attributes
+                0x00000000000000f8       0x1a putchar.o
+ *fill*         0x0000000000000112        0x2 
+ .text          0x0000000000000114       0x34 getchar.o
+                0x0000000000000114                getchar
+ .data          0x0000000000000148        0x0 getchar.o
+ .bss           0x0000000000000148        0x0 getchar.o
+ .riscv.attributes
+                0x0000000000000148       0x1a getchar.o
+LOAD wait.o
+LOAD putchar.o
+LOAD getchar.o
+LOAD example1.o
+OUTPUT(firmware.elf elf32-littleriscv)
