@@ -49,12 +49,12 @@ Diseñar un sistema de medición de turbidez de agua que obtenga datos en tiempo
 | Archivo               | Función                                                                 |
 |-----------------------|-------------------------------------------------------------------------|
 | `SOC.v`               |  Módulo principal del SoC, conecta CPU, memoria y periféricos.          |
-| `top_tb.v`            |  Testbenches para simular comportamiento                                |
+| `uart_tx.v`           |  Envía datos de estado por UART a microcontrolador o dispotivo.                              |
 | `address_decoder.v`   |  Decodifica direcciones para acceso a memoria y periféricos.            |
 | `bench_quark.v`       |  Banco de pruebas para la CPU (núcleo tipo Quark).                      |
 | `chip_select.v`       |  Controla la habilitación de módulos según la dirección.                |  
-| `uart_tx.v`           |  Envía datos de estado por UART a microcontrolador o dispotivo.         | 
-|   mult.v	            |  Módulo principal del multiplicador.                                    |
+|  `top_tb.v`           | Testbenches para simular comportamiento                                 | 
+|  `mult.v	`            |  Módulo principal del multiplicador.                                    |
 
 ##
 ##
