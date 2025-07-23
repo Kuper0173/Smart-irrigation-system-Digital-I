@@ -77,7 +77,7 @@ Durante el desarrollo del proyecto, se presentaron algunos problemas técnicos r
 
 A continuación, se muestra el diagrama de conexiones entre los componentes principales:
 
-![Diagrama de Conexión](ruta/a/tu/diagrama.png)
+![Diagrama de Conexión]([ruta/a/tu/diagrama.png](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Mapa%20de%20conexiones.jpg))
 
 Este diagrama ilustra cómo están conectados los pines de la FPGA BlackIceMX al sensor **DHT11**, los displays de 7 segmentos y el módulo **ESP32** para el envío de alertas. Los pines están configurados de acuerdo a la asignación especificada en el archivo **SOC.pcf**.
 
