@@ -502,6 +502,27 @@ Significa que el diseño no contiene bloques secuenciales de alto nivel (always,
 
 Indica la cantidad total de celdas lógicas utilizadas. Estas celdas son primitivas básicas de la FPGA (como flip-flops, LUTs, registros, etc.) que implementan el comportamiento funcional del sistema.
 
+## 🔁 Diagrama de flujo del análisis
+
+```mermaid
+flowchart TD
+    A[Inicio del análisis de síntesis] --> B[Lectura del diseño HDL]
+    B --> C[Generación de netlist]
+    C --> D[Asignación de wires]
+    D --> E{¿Hay memoria?}
+    E -- No --> F[Memorias utilizadas: 0]
+    E -- Sí --> G[Contar memoria y procesos]
+    F --> H[Contar bits y wires públicos]
+    G --> H
+    H --> I[Calcular total de celdas utilizadas]
+    I --> J[Generar informe de recursos]
+    J --> K[Fin del análisis]
+
+
+
+
+
+
 
 
 ###  Tipos de celdas utilizadas
