@@ -146,7 +146,124 @@ Todo inicia en la FPGA enviando una señal al ESP32; este le envía la instrucci
 
 ## Diagrama de flujo ESP32
 
+```python
+import time
+import network
+from umqtt.simple import MQTTClient
+from machine import Pin, ADC, UART
 
+# Configuración WiFi
+SSID = "tu_red_wifi"
+PASSWORD = "tu_contraseña_wifi"
+
+# Configuración MQTT
+MQTT_BROKER = "192.168.1.100"
+CLIENT_ID = "esp32"
+TOPIC_UART_RX = CLIENT_ID + "/uart_rx"
+
+# Pines
+PIN_BOTON = 35  # botón o pin digital de lectura
+PIN_ADC = 32    # entrada analógica
+TX_PIN = 17
+RX_PIN = 16
+BAUDRATE = 57600
+
+# Inicialización de periféricos
+adc = ADC(Pin(PIN_ADC))
+adc.atten(ADC.ATTN_11DB)
+adc.width(ADC.WIDTH_12BIT)
+
+boton = Pin(PIN_BOTON, Pin.IN, Pin.PULL_UP)
+uart = UART(2, baudrate=BAUDRATE, tx=TX_PIN, rx=RX_PIN)
+
+def conectar_wifi():
+    sta = network.WLAN(network.STA_IF)
+    sta.active(True)
+    if not sta.isconnected():
+        print("Conectando a WiFi...")
+        sta.connect(SSID, PASSWORD)
+        while not sta.isconnected():
+            pass
+    print("Conectado. IP:", sta.ifconfig()[0])
+
+def conectar_mqtt():
+    cliente = MQTTClient(CLIENT_ID, MQTT_BROKER)
+    cliente.connect()
+    print("Conectado al broker MQTT")
+    return cliente
+
+# Función principal
+def main():
+    conectar_wifi()
+    cliente_mqtt = conectar_mqtt()
+
+    while True:
+        # Revisa si hay datos recibidos en UART
+        if uart.any():
+            data = uart.read().decode("utf-8")
+            print("Recibido por UART:", data)
+            cliente_mqtt.publish(TOPIC_UART_RX, data)
+
+        # Lee estado del pin digital 35 (botón)
+        if boton.value() == 0:  # Pulsado
+            valor_adc = adc.read()
+            print("Valor ADC:", valor_adc)
+            uart.write("ADC: {}\n".format(valor_adc))
+        
+        time.sleep(0.1)
+
+if __name__ == "__main__":
+    main()
+
+```
+
+**Funcionamiento del Código en ESP32**
+
+-Este programa en MicroPython implementa la lógica mostrada en el diagrama de flujo para un sistema embebido basado en ESP32. El dispositivo realiza las siguientes funciones principales:
+
+1. Inicialización de Componentes
+-Se establece la conexión con una red WiFi utilizando las credenciales configuradas (SSID y PASSWORD).
+
+-Se conecta al servidor MQTT (broker) especificado.
+
+-Se configuran los pines:
+
+-GPIO35: Entrada digital con resistencia Pull-Up (para lectura de un botón o señal digital).
+
+-GPIO32: Entrada analógica (ADC).
+
+-UART2: Comunicación serie por TX=17 y RX=16.
+
+ 2. Comunicación UART y MQTT
+-El ESP32 escucha continuamente por el puerto UART (RX).
+
+-Si recibe datos, estos se decodifican y se publican al broker MQTT bajo el tópico correspondiente.
+
+ 3. Lectura de Pin Digital
+-Si el pin digital 35 detecta un nivel bajo (por ejemplo, si se presiona un botón):
+
+-Se realiza una lectura del convertidor analógico-digital (ADC).
+
+-El valor leído se envía por el puerto UART (TX) al dispositivo receptor (por ejemplo, una FPGA).
+
+ **Lógica del Programa (Resumen del Diagrama de Flujo)**
+-Inicia ESP32.
+
+-Se ejecutan funciones de inicialización init enable() y start().
+
+-Se habilitan los pines y periféricos necesarios.
+
+-En cada iteración del ciclo principal:
+
+-Si se recibe un dato en RX:
+
+-Se publica al broker MQTT.
+
+-Si el pin digital 35 está en bajo:
+
+-Se lee el valor ADC.
+
+-Se envía el valor por TX.
 <p align="center">
   <img src="./Diagrama_de_flujo_ESP32.jpg" alt="Diagrama de flujo ESP32" width="6000"/>
 </p>
