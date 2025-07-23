@@ -424,5 +424,12 @@ A continuación se describen las partes clave del programa que permite la comuni
 #### Condicional final
 - La condición `if __name__ == "__main__":` asegura que la función `main()` se ejecute solamente si el archivo es ejecutado directamente, no si es importado como módulo desde otro script.
 
-Este sistema permite crear una solución de monitoreo y control remoto usando ESP32, MQTT y comunicación serial UART, aplicable a automatización del hogar, riego automatizado, y otros sistemas embebidos conectados.
+
+### Diagrama de flujo de conexion de la ESP32 al servidor MQTT a internet
+
+
+<p align="center">
+  <img src="./RTL_controlador_riego_interno.jpg" alt="RTL_controlador riego interno" width="6000"/>
+</p>
+
 
