@@ -64,6 +64,7 @@ Todo inicia en la FPGA enviando una señal al ESP32; este le envía la instrucci
 <p align="center">
   <img src="./diagrama_de_bloques.jpg" alt="Diagrama de bloques" width="6000"/>
 </p>
+
 ---
 
 ## Descripción de los Módulos del Sistema y sus Conexiones
