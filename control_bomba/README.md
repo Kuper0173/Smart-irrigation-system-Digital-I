@@ -502,7 +502,10 @@ Significa que el diseño no contiene bloques secuenciales de alto nivel (always,
 
 Indica la cantidad total de celdas lógicas utilizadas. Estas celdas son primitivas básicas de la FPGA (como flip-flops, LUTs, registros, etc.) que implementan el comportamiento funcional del sistema.
 
-## 🔁 Diagrama de flujo del análisi 
+## 🔁 Diagrama de flujo
+
+<img width="828" height="3018" alt="deepseek_mermaid_20250723_487ee9" src="https://github.com/user-attachments/assets/74bf76f8-903b-4392-a602-e4bb38ea38ca" />
+
 
 
 
