@@ -179,6 +179,8 @@ Este es un diagrama de simulación realizado en **Digital**, un software utiliza
 
 Este diagrama es parte de la simulación que se ejecuta en **Digital**, donde se pueden ver en tiempo real cómo las señales viajan a través de los componentes y cómo se muestran los números en los displays de 7 segmentos. A través de esta simulación, se puede verificar el comportamiento y la correcta implementación del sistema antes de llevarlo a la práctica.
 
+![](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Simulacio_Digital.jpg)
+
 ---
 
 **En este [link](https://www.youtube.com/watch?v=Dt64bOUN48Q)** encontrarán un video explicando en detalle la simulación de este circuito, donde se muestra cómo cada componente interactúa y cómo se visualizan los resultados en los displays de 7 segmentos.
