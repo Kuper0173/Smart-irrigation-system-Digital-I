@@ -429,7 +429,7 @@ A continuación se describen las partes clave del programa que permite la comuni
 
 
 <p align="center">
-  <img src="./RTL_controlador_riego_interno.jpg" alt="RTL_controlador riego interno" width="6000"/>
+  <img src="./Diagrama_flujo_ESP32_a_internet.png" alt="Diagrama flujo ESP32 a internet.png" width="6000"/>
 </p>
 
 
