@@ -270,3 +270,159 @@ Este tipo de adaptación es crucial cuando se conectan sensores con salida super
 Imagen del montaje del divisor de voltaje:
 
 ![RTL SoC](imagen_ADC.jpg) 
+
+---
+
+## Conexión del ESP32 a Internet y al Servidor MQTT
+
+Este código permite que un ESP32 se conecte a una red WiFi local y se comunique mediante el protocolo MQTT con un servidor (broker) para intercambiar datos. Utiliza periféricos como UART, ADC y GPIO para interactuar con sensores y otros dispositivos.
+
+### Código en MicroPython
+
+```python
+import time
+import network
+from umqtt.simple import MQTTClient
+from machine import Pin, ADC, UART
+
+# NETWORK
+SSID = "luna"
+PASSWORD = "password"
+
+# MQTT DEFINITIONS
+MQTT_BROKER = "192.168.2.105"
+CLIENT_ID = "dev1"
+TOPIC_LED = CLIENT_ID + "/led"
+TOPIC_ADC = CLIENT_ID + "/adc"
+TOPIC_UART = CLIENT_ID + "/uart"
+
+# PERIPHERALS DEFINITIONS
+LED_PIN = 2
+BUTTON_PIN = 0
+ADC_PIN = 32
+TX_PIN = 17
+RX_PIN = 16
+BAUDRATE = 57600
+
+# Make objects for peripherals
+led = Pin(LED_PIN, Pin.OUT)
+adc = ADC(Pin(ADC_PIN))
+user_button = Pin(BUTTON_PIN, Pin.IN, Pin.PULL_UP)
+uart_fpga = UART(2, baudrate=BAUDRATE, tx=TX_PIN, rx=RX_PIN)
+
+# Callback mqtt
+def subscribe_callback(topic, msg):
+    topic = topic.decode("utf-8")
+    msg = msg.decode("utf-8")
+    print((topic, msg))
+    if topic == TOPIC_LED:
+        if msg == "on":
+            led.value(1)
+        elif msg == "off":
+            led.value(0)
+
+def connect_mqtt():
+    client = MQTTClient(CLIENT_ID, MQTT_BROKER)
+    client.set_callback(subscribe_callback)
+    client.connect()
+    client.subscribe(TOPIC_LED)
+    print(f"Conectado a {MQTT_BROKER}, suscrito a {TOPIC_LED}")
+    return client
+
+def connectSTA(ssid, pwd):
+    sta_if = network.WLAN(network.STA_IF)
+    if not sta_if.isconnected():
+        print("connecting to network...")
+        sta_if.active(True)
+        sta_if.connect(ssid, pwd)
+        while not sta_if.isconnected():
+            pass
+    print("network config:", sta_if.ifconfig())
+
+# Función principal
+def main():
+    connectSTA(SSID, PASSWORD)
+    mqtt_client = connect_mqtt()
+    print("Esperando datos UART o mensajes MQTT...")
+
+    while True:
+        try:
+            mqtt_client.check_msg()
+        except Exception as e:
+            print(e)
+            mqtt_client = connect_mqtt()
+        
+        if user_button.value() == 0:
+            adc_value = adc.read()
+            print(adc_value)
+            mqtt_client.publish(TOPIC_ADC, str(adc_value))
+        
+        if uart_fpga.any():
+            mqtt_client.publish(TOPIC_UART, uart_fpga.read().decode("utf-8"))
+        
+        time.sleep(0.1)
+
+if __name__ == "__main__":
+    main()
+```
+### Explicación detallada del funcionamiento del código
+
+A continuación se describen las partes clave del programa que permite la comunicación y control de un ESP32 mediante MQTT y periféricos físicos:
+
+#### Importaciones
+- `time`: Permite establecer retardos (delays) entre ciclos del programa.
+- `network`: Se utiliza para conectar el ESP32 a una red WiFi.
+- `MQTTClient`: Biblioteca para conectarse a un broker MQTT y publicar/suscribirse a temas.
+- `machine`: Permite el acceso a periféricos del ESP32 como pines digitales, UART y ADC.
+
+#### Definiciones de red
+- `SSID` y `PASSWORD`: Contienen el nombre y la clave de la red WiFi a la que se conecta el ESP32.
+
+#### Definiciones MQTT
+- `MQTT_BROKER`: Dirección IP del broker MQTT con el que se desea comunicar.
+- `CLIENT_ID`: Identificador único que distingue a este dispositivo en el servidor MQTT.
+- `TOPIC_LED`, `TOPIC_ADC`, `TOPIC_UART`: Tópicos (canales) a través de los cuales se reciben o publican mensajes para controlar el LED, enviar datos del ADC o comunicar información por UART.
+
+#### Definición de pines
+- Se establecen los GPIO que se usarán para:
+  - LED (salida digital)
+  - Botón (entrada digital con resistencia pull-up)
+  - Pin analógico (entrada ADC)
+  - Comunicación UART (TX y RX)
+
+#### Creación de objetos
+- `led`, `adc`, `user_button`, `uart_fpga`: Objetos que permiten el control directo de los periféricos reales en la placa ESP32, configurados según los pines asignados.
+
+#### Función subscribe_callback(topic, msg)
+- Esta función se ejecuta automáticamente cuando se recibe un mensaje por MQTT.
+- Si el mensaje pertenece al tópico del LED:
+  - Si el mensaje es "on", se enciende el LED.
+  - Si el mensaje es "off", se apaga el LED.
+
+#### Función connect_mqtt()
+- Establece la conexión entre el ESP32 y el broker MQTT.
+- Configura la función de callback para manejar los mensajes entrantes.
+- Se suscribe al tópico `TOPIC_LED` para recibir comandos.
+- Devuelve un objeto cliente MQTT conectado.
+
+#### Función connectSTA(ssid, pwd)
+- Activa el modo estación del ESP32 para actuar como cliente de red WiFi.
+- Intenta conectarse a la red especificada mediante SSID y contraseña.
+- Espera en un bucle hasta que se haya establecido la conexión.
+- Imprime la dirección IP obtenida por DHCP.
+
+#### Función main()
+- Conecta el ESP32 al WiFi utilizando `connectSTA`.
+- Se conecta al broker MQTT mediante `connect_mqtt`.
+- Entra en un bucle continuo donde realiza:
+  1. Revisión de nuevos mensajes MQTT (con `check_msg()`).
+  2. Reintento de conexión si la conexión MQTT se pierde.
+  3. Lectura del valor ADC cuando el botón físico es presionado, y publicación del valor por MQTT.
+  4. Lectura de cualquier dato disponible por UART, y publicación del texto leído por MQTT.
+  5. Espera de 100 ms para reducir el uso de CPU y evitar saturación.
+
+#### Condicional final
+- La condición `if __name__ == "__main__":` asegura que la función `main()` se ejecute solamente si el archivo es ejecutado directamente, no si es importado como módulo desde otro script.
+
+Este sistema permite crear una solución de monitoreo y control remoto usando ESP32, MQTT y comunicación serial UART, aplicable a automatización del hogar, riego automatizado, y otros sistemas embebidos conectados.
+
