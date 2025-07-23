@@ -1,12 +1,13 @@
-# Proyecto SoC – FPGA BlackIce 8.2
+# Modulo de control inteligente de riego
 
-Este proyecto implementa un sistema embebido sobre FPGA utilizando el flujo de diseño de [herramienta o entorno que uses, ej: Icestorm/Yosys/NextPNR]. El módulo desarrollado cumple funciones específicas de procesamiento y se comunica con aplicaciones externas como [MQTT, Chuck, etc.], integrándose en un sistema más amplio.
+Este proyecto implementa un sistema embebido sobre FPGA, el cual recibe parametros de otros modulos (sensores) y en base a esas mediciones se controla el tiempo de riego y la frecuencia del mismo.
 
 ---
 
 ##  Requerimientos Funcionales
 
-> Describir brevemente qué debe hacer el módulo (entradas, salidas, comportamiento esperado).
+Mediante protocolos de comunicacion por MQTT se reciben los parametros de humedad de la tierra, funcionalidad de la bomba de agua, cantidad de agua y la temperatura ambiente. A su vez se incluye un interruptor de encendido/apagado.
+La salida esta en funcion de la temperatura del ambiente la cual entre mayor sea da mayor tiempo de irrigacion de la plantacion.
 
 ---
 
@@ -20,7 +21,7 @@ Este proyecto implementa un sistema embebido sobre FPGA utilizando el flujo de d
 
 ##  Diagrama RTL
 
-> Incluye una representación del RTL del sistema completo y del módulo específico.
+<img width="1220" height="636" alt="Captura de pantalla de 2025-07-23 04-58-15" src="https://github.com/user-attachments/assets/e055b7b1-6c8a-44be-a8ad-acc20449a036" />
 
 - Comando utilizado: `make rtl`  
 - Para módulo específico: `make rtl top=modulo_especifico`
