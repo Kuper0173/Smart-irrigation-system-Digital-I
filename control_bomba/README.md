@@ -312,6 +312,41 @@ Este muestra toda la estructura del sistema embebido (SoC): incluye el procesado
 ![Imagen de WhatsApp 2025-07-23 a las 21 20 19_dac2236f](https://github.com/user-attachments/assets/c557b6ab-2f71-4048-86a5-3c7671b9fdef)
 
 
+
+**Procesador FemtoRV32**
+- El núcleo principal del sistema es el FemtoRV32, encargado de ejecutar instrucciones almacenadas en memoria. Se comunica con los periféricos a través de direcciones de memoria usando el esquema de memoria mapeada (MMIO). Todas las operaciones de lectura y escritura se realizan a través de las señales estándar del bus (mem_addr, mem_rstrb, mem_wdata, etc.).
+
+**Decodificador de Direcciones y Memoria**
+
+- El bus de direcciones se divide para seleccionar entre diferentes módulos:
+- Una memoria principal, donde se almacenan instrucciones y datos.
+- Un bloque chip_select, que habilita el periférico correspondiente según la dirección.
+- Este decodificador activa una de las líneas chipX_dout, que permiten direccionar correctamente la lectura desde los distintos módulos.
+
+**Periférico UART**
+
+- El módulo UART proporciona comunicación serial entre la FPGA y un dispositivo externo (como una ESP32 o PC). El procesador puede enviar y recibir datos por medio de este periférico, y también se incluye una salida ledout que se puede utilizar como indicador visual de actividad.
+
+**Periférico HC-SR04 (Sensor ultrasónico)**
+
+- Este módulo controla un sensor ultrasónico para medir distancia. Recibe la señal ECHO del sensor y genera un pulso de TRIGGER. El resultado de la medición se almacena internamente y se puede leer desde el procesador. Adicionalmente, si la distancia medida es inferior a cierto umbral, se activa la señal ACTIVAR, que puede utilizarse para encender una bomba u otro actuador.
+
+**Periférico Multiplicador**
+
+- Este módulo realiza operaciones de multiplicación entre datos escritos por el procesador. El resultado se puede leer posteriormente, útil para pruebas o cálculos intermedios en el sistema.
+
+**LEDs**
+
+- Los LED conectados al sistema actúan como indicadores de estado. En este diseño, están conectados a la salida del módulo UART (ledout) para visualizar actividad de comunicación o estados definidos por el firmware.
+
+**Flujo de operación general**
+
+- El procesador accede a una dirección específica.
+- El decodificador de direcciones (chip_select) determina si se trata de memoria o un periférico.
+- Si es un periférico, se habilitan señales de control (rd, wr, cs).
+- El periférico responde con datos en d_out, que se enrutan hacia mem_rdata para que el procesador los lea.
+
+
 **RLT DEL SENSOR**
 
 Este muestra sólo la lógica del módulo HC-SR04: cómo se manejan las señales echo, trigger, distance, los contadores, registros y comparadores internos.
