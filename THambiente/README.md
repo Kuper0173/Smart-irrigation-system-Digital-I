@@ -185,6 +185,50 @@ Este diagrama es parte de la simulación que se ejecuta en **Digital**, donde se
 
 **En este [link](https://www.youtube.com/watch?v=Dt64bOUN48Q)** encontrarán un video explicando en detalle la simulación de este circuito, donde se muestra cómo cada componente interactúa y cómo se visualizan los resultados en los displays de 7 segmentos.
 
+## Descripción General del Sistema
+
+El conjunto de diagramas proporcionados corresponde a un diseño de sistema digital basado en **FPGA** para la lectura y visualización de la temperatura con un sensor **DHT11** en displays de 7 segmentos. A continuación, te proporciono una descripción general de los componentes y su funcionamiento.
+
+### 1. DHT11_Read
+
+Este módulo es responsable de **leer** los datos del sensor **DHT11**. El sensor envía datos digitales que son capturados por el módulo y convertidos en una señal legible por la FPGA. Los datos son luego enviados para su procesamiento.
+
+### 2. DHT11_to_BCD
+
+En este módulo, los datos obtenidos del sensor **DHT11** (temperatura en formato digital) son **convertidos a BCD (Binary Coded Decimal)**. Este formato es utilizado para representar la temperatura en un formato compatible con los displays de 7 segmentos. 
+El proceso de conversión se realiza dividiendo los datos en **decenas** y **unidades** para su correcta visualización.
+
+### 3. Multiplexed_Display
+
+Este módulo se encarga de **multiplexar** los valores de temperatura (decenas y unidades) y enviarlos a los displays de 7 segmentos. La multiplexación permite mostrar ambos dígitos de la temperatura en los dos displays de manera eficiente, alternando entre ellos a alta velocidad.
+
+### 4. Peripheral_dht11_display
+
+Es el módulo periférico que **gestiona la visualización de los datos** en los displays de 7 segmentos. Los valores procesados de las temperaturas son enviados a los displays a través de señales de control de los segmentos (a-g) y ánodos. 
+Este módulo también incluye un control de señales como **reset** y **clock** para garantizar la sincronización de la visualización.
+
+### 5. Control y Conexiones
+
+Las conexiones del sistema incluyen señales de **dirección**, **lectura** y **escritura** para controlar el flujo de datos entre los módulos y los displays.
+Las señales de **clock** (CLK) y **reset** se utilizan para sincronizar y reiniciar los módulos cuando sea necesario, asegurando que el sistema funcione correctamente en tiempo real.
+Se utilizan multiplexores y demultiplexores para seleccionar qué información es mostrada en los displays, basándose en los valores de las señales de control.
+
+### Resumen de Funcionamiento
+
+- El sistema lee la **temperatura** del sensor **DHT11** mediante el módulo **DHT11_Read**.
+- Luego, la temperatura es procesada y convertida en **formato BCD** por el módulo **DHT11_to_BCD**.
+- A continuación, los valores de las **decenas** y **unidades** son multiplexados y enviados al módulo **Multiplexed_Display**.
+- Finalmente, el **Peripheral_dht11_display** toma estos valores y los visualiza en los **displays de 7 segmentos**.
+
+![](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/DHT11_Display.PNG)
+![](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/DHT11_Read.PNG)
+![](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/DHT11_to_BCD.PNG)
+![](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Multiplexed_Display.PNG)
+![](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/peripheral_dht11_display.PNG)
+
+
+Este sistema permite una visualización precisa de la temperatura y es controlado mediante una FPGA, con todos los módulos trabajando en conjunto para leer, procesar y mostrar los datos de manera efectiva.
+
 
 ## Resultados Esperados
 
