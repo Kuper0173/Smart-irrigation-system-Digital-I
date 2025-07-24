@@ -229,6 +229,10 @@ Se utilizan multiplexores y demultiplexores para seleccionar qué información e
 
 Este sistema permite una visualización precisa de la temperatura y es controlado mediante una FPGA, con todos los módulos trabajando en conjunto para leer, procesar y mostrar los datos de manera efectiva.
 
+## Video Explicativo
+![](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Explicacion%20video%20final.jpg)
+
+**En este [link](https://www.youtube.com/watch?v=Dt64bOUN48Q)** encontrarán un video explicando en detalle el circuito y el codigo donde se muestra cómo cada componente interactúa y cómo se visualizan los resultados en los displays de 7 segmentos.
 
 ## Resultados Esperados
 
