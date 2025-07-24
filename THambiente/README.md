@@ -232,7 +232,7 @@ Este sistema permite una visualización precisa de la temperatura y es controlad
 ## Video Explicativo
 ![](https://github.com/Kuper0173/Smart-irrigation-system-Digital-I/blob/main/THambiente/Explicacion%20video%20final.jpg)
 
-**En este [link](https://www.youtube.com/watch?v=Dt64bOUN48Q)** encontrarán un video explicando en detalle el circuito y el codigo donde se muestra cómo cada componente interactúa y cómo se visualizan los resultados en los displays de 7 segmentos.
+**En este [link](https://youtu.be/jMCp1LaFRo0?si=EMu4GMIiggIHY7zi)** encontrarán un video explicando en detalle el circuito y el codigo donde se muestra cómo cada componente interactúa y cómo se visualizan los resultados en los displays de 7 segmentos.
 
 ## Resultados Esperados
 
