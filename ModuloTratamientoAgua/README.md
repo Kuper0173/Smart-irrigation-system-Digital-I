@@ -12,8 +12,9 @@ stibaquira@unal.edu.co
 aroseroy@unal.edu.co 
 - Daniel santiago Navarro Gil
 dnavarrog@unal.edu.co
-
-
+---
+## link video explicacion README: https://youtu.be/zTn0_lvcJQo
+## link video explicacion MONTAJE: https://youtu.be/zTn0_lvcJQo
 ## Introducción
 
 La calidad del agua es un factor determinante tanto en la salud humana como en la eficiencia de los cultivos agrícolas. Uno de los parámetros fundamentales para evaluar dicha calidad es la turbidez, que representa la cantidad de partículas suspendidas en el agua, como sedimentos, materia orgánica y microorganismos. Diversos estudios han demostrado que niveles elevados de turbidez están asociados a consecuencias negativas para la salud pública y la productividad agrícola.
